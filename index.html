@@ -131,11 +131,11 @@
     .wcard.reviewing { border-left: 0.5rem solid var(--review); }
     
     .c-tag { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: white; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 0.8rem; align-self: flex-start; }
-    .c-en { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+    .c-en { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
     .c-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.3rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.8rem; }
     .c-ex-en { font-size: 0.9rem; font-style: italic; color: var(--text-sub); margin-bottom: 0.6rem; line-height: 1.4; padding-left: 0.6rem; border-left: 3px solid var(--accent); }
-    .c-pron { font-size: 0.8rem; color: #14b8a6; font-family: monospace; margin-bottom: 0.8rem; font-weight: 700; }
-    .c-ex-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.2rem; color: var(--accent); margin-bottom: 1rem; font-weight: 600; line-height: 1.4; }
+    .c-pron { font-size: 0.95rem; color: #000; font-family: monospace; margin-bottom: 0.8rem; font-weight: bolder; }
+    .c-ex-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.2rem; color: rgba(0, 0, 0, .85); font-weight: 600; line-height: 1.4; }
     .c-family-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
     .c-family { font-size: 1rem; color: var(--text-sub); font-weight: 500; }
 
@@ -244,7 +244,7 @@ body.no-nav {
 <header class="header" id="main-header">
   <div class="header-inner">
     <div class="header-top">
-      <div class="logo" id="logo-home" onclick="location.reload()">ELITE VOCAB</div>
+      <div class="logo" id="logo-home" onclick="location.reload()"><span style="color: black;">voca</span>vocabHSC</div>
       <div class="header-actions">
         <button class="action-btn-circle" id="btn-full">⛶</button>
         <button class="action-btn-circle" id="btn-blind">👁️</button>
@@ -339,7 +339,7 @@ body.no-nav {
   let vocab = [];
   let progress = JSON.parse(localStorage.getItem('hscEliteData') || '{}');
   let curPg = 1;
-  const pgSize = 15;
+  const pgSize = 16;
   let isBlindMode = false;
   
   let currentFontSize = parseInt(localStorage.getItem('hscEliteFont')) || 16;
