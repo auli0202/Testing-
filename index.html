@@ -53,6 +53,7 @@
       padding-bottom: 110px;
       transition: background 0.3s;
       line-height: 1.5;
+      overflow-x: hidden;
     }
 
     /* --- Smart Header --- */
@@ -75,29 +76,30 @@
     .header-top { display: flex; justify-content: space-between; align-items: center; }
     .logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); cursor: pointer; }
     
-    .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .header-actions { display: flex; align-items: center; gap: 0.4rem; }
     .action-btn-circle {
-        width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1.5px solid var(--border);
+        width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1.5px solid var(--border);
         background: var(--card-bg); color: var(--text-main); display: flex;
-        align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;
+        align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;
     }
     .action-btn-circle.active { background: var(--accent); color: white; border-color: var(--accent); }
 
     /* BIG STATS BUTTONS */
-    .stats-row { display: flex; gap: 0.6rem; justify-content: space-between; align-items: center; }
+    .stats-row { display: flex; gap: 0.5rem; justify-content: space-between; align-items: center; }
     .stat-chip { 
-      flex: 1; height: 3.8rem; border-radius: 1rem; border: 1.5px solid var(--border);
+      flex: 1; height: 3.5rem; border-radius: 0.8rem; border: 1.5px solid var(--border);
       background: var(--card-bg); display: flex; flex-direction: column; 
       align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+      min-width: 0; /* Ensures shrinking on small mobile */
     }
-    .stat-chip span:first-child { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; opacity: 0.7; }
-    .stat-chip span:last-child { font-size: 1.1rem; font-weight: 800; }
+    .stat-chip span:first-child { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; opacity: 0.7; }
+    .stat-chip span:last-child { font-size: 1rem; font-weight: 800; }
     
     .stat-chip.total { border-color: var(--accent); color: var(--accent); }
     .stat-chip.m { border-color: var(--correct); color: var(--correct); }
     .stat-chip.r { border-color: var(--review); color: var(--review); }
 
-    .overall-progress-wrap { width: 100%; height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+    .overall-progress-wrap { width: 100%; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
     #overall-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.5s ease; }
 
     /* --- Blind Mode --- */
@@ -106,89 +108,112 @@
     .blind-mode .c-actions { display: none !important; }
     .blind-mode .wcard { min-height: 5rem; justify-content: center; border-left-width: 4px; }
 
-    .main-container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .main-container { max-width: 1200px; margin: 0 auto; padding: 0.8rem; }
     .controls { 
-      background: var(--card-bg); padding: 1rem; border-radius: 1.2rem; border: 1px solid var(--border);
-      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem;
+      background: var(--card-bg); padding: 0.8rem; border-radius: 1rem; border: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.2rem;
     }
     input, select, .btn {
-      padding: 0.7rem; border-radius: 0.8rem; border: 1.5px solid var(--border);
-      background: var(--card-bg); color: var(--text-main); font-size: 0.9rem; outline: none;
+      padding: 0.6rem; border-radius: 0.6rem; border: 1.5px solid var(--border);
+      background: var(--card-bg); color: var(--text-main); font-size: 0.85rem; outline: none;
     }
     .btn { font-weight: 700; cursor: pointer; }
-    .btn-outline { border: 2px solid var(--accent); color: var(--accent); width: 3rem; }
+    .btn-outline { border: 2px solid var(--accent); color: var(--accent); min-width: 2.8rem; }
     .btn-primary { background: var(--accent); color: white; border: none; }
 
-    /* --- Word Cards (Strict Order: E, A+B, D, C, F, G) --- */
-    .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    /* --- Word Cards --- */
+    .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
     .wcard {
-      background: var(--card-bg); border-radius: 1.8rem; padding: 1.5rem;
+      background: var(--card-bg); border-radius: 1.5rem; padding: 1.2rem;
       border: 1.5px solid var(--border); display: flex; flex-direction: column; 
     }
-    .wcard.mastered { border-left: 0.6rem solid var(--correct); }
-    .wcard.reviewing { border-left: 0.6rem solid var(--review); }
+    .wcard.mastered { border-left: 0.5rem solid var(--correct); }
+    .wcard.reviewing { border-left: 0.5rem solid var(--review); }
     
-    .c-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: white; padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 1rem; align-self: flex-start; }
-    .c-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
-    .c-en { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
-    .c-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.45rem; color: var(--text-main); font-weight: 600; margin-bottom: 1rem; }
-    .c-ex-en { font-size: 1rem; font-style: italic; color: var(--text-sub); margin-bottom: 0.8rem; line-height: 1.4; padding-left: 0.8rem; border-left: 3px solid var(--accent); }
-    .c-pron { font-size: 0.85rem; color: #14b8a6; font-family: monospace; margin-bottom: 1rem; font-weight: 700; }
-    
-    /* BIGGER BENGALI EXAMPLES */
-    .c-ex-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.35rem; color: var(--accent); margin-bottom: 1.2rem; font-weight: 600; line-height: 1.5; }
-    
-    .c-family-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-    .c-family { font-size: 0.75rem; background: var(--ex-bg); padding: 4px 10px; border-radius: 8px; color: var(--text-sub); border: 1px solid var(--border); font-weight: 600; }
+    .c-tag { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: white; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 0.8rem; align-self: flex-start; }
+    .c-en { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+    .c-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.3rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.8rem; }
+    .c-ex-en { font-size: 0.9rem; font-style: italic; color: var(--text-sub); margin-bottom: 0.6rem; line-height: 1.4; padding-left: 0.6rem; border-left: 3px solid var(--accent); }
+    .c-pron { font-size: 0.8rem; color: #14b8a6; font-family: monospace; margin-bottom: 0.8rem; font-weight: 700; }
+    .c-ex-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.2rem; color: var(--accent); margin-bottom: 1rem; font-weight: 600; line-height: 1.4; }
+    .c-family-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .c-family { font-size: 0.7rem; background: var(--ex-bg); padding: 3px 8px; border-radius: 6px; color: var(--text-sub); border: 1px solid var(--border); font-weight: 600; }
 
-    .c-actions { display: flex; gap: 0.6rem; margin-top: auto; border-top: 1.5px solid var(--border); padding-top: 1.2rem; }
-    .s-btn { flex: 1; padding: 0.7rem; border-radius: 0.8rem; border: 2px solid var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-main); }
+    .c-actions { display: flex; gap: 0.5rem; margin-top: auto; border-top: 1.5px solid var(--border); padding-top: 1rem; }
+    .s-btn { flex: 1; padding: 0.6rem; border-radius: 0.7rem; border: 2px solid var(--border); font-size: 0.8rem; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-main); }
     .s-btn.m.active { background: var(--correct); color: white; border-color: var(--correct); }
     .s-btn.r.active { background: var(--review); color: white; border-color: var(--review); }
 
-    /* --- Flashcards --- */
-    .fc-wrap { max-width: 500px; margin: 0 auto; }
-    .session-progress-wrap { width: 100%; height: 8px; background: var(--border); border-radius: 10px; margin-bottom: 1.5rem; overflow: hidden; }
-    #session-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease; }
+    /* --- Adaptive Flashcards (Fixed Size, Scaling Text) --- */
+    .fc-wrap { width: 100%; max-width: 400px; margin: 0 auto; }
     .flip-card {
-      background: var(--card-bg); height: 26rem; border-radius: 2rem; border: 2.5px solid var(--border);
+      background: var(--card-bg); 
+      height: 60vh; /* Relative to screen height */
+      max-height: 480px; 
+      min-height: 380px;
+      border-radius: 2rem; border: 2.5px solid var(--border);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 2.5rem; cursor: pointer; position: relative;
+      text-align: center; padding: 1.5rem; cursor: pointer; position: relative;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+      overflow: hidden; /* Important: prevents card growing */
     }
-    .fc-speak-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; background: none; border: none; cursor: pointer; }
-    .fc-ex-bn-big { font-family: 'Noto Serif Bengali', serif; font-size: 1.45rem; color: var(--accent); font-weight: 700; margin-top: 1rem; display: block; line-height: 1.5; }
-    .fc-nav { display: flex; justify-content: center; gap: 1.2rem; margin-top: 2rem; }
-    .fc-nav-btn { width: 8rem; height: 3.2rem; font-size: 1rem; }
+    
+    /* Text scaling logic */
+    .fc-en-text { 
+        font-size: clamp(1.8rem, 10vw, 3.2rem); 
+        font-weight: 800; 
+        width: 100%; 
+        word-wrap: break-word; 
+        line-height: 1.1;
+    }
+    .fc-bn-text { 
+        font-family: 'Noto Serif Bengali', serif; 
+        font-size: clamp(1.4rem, 8vw, 2.5rem); 
+        line-height: 1.3;
+        width: 100%;
+    }
+    .fc-detail-box {
+        margin-top: 1rem; padding: 1rem; background: var(--ex-bg); 
+        border-radius: 1.2rem; width: 100%; max-height: 50%; overflow-y: auto;
+    }
+    .fc-ex-en-small { font-size: clamp(0.8rem, 3.5vw, 1rem); font-style: italic; color: var(--text-sub); }
+    .fc-ex-bn-small { font-family: 'Noto Serif Bengali', serif; font-size: clamp(0.9rem, 4vw, 1.2rem); color: var(--accent); font-weight: 700; display: block; margin-top: 5px; }
+
+    .fc-speak-btn { position: absolute; top: 1.2rem; right: 1.2rem; font-size: 1.8rem; background: none; border: none; cursor: pointer; z-index: 10; }
+    .fc-nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+    .fc-nav-btn { flex: 1; max-width: 120px; height: 3.2rem; }
 
     /* --- Quiz --- */
-    .quiz-card { background: var(--card-bg); padding: 2rem; border-radius: 2rem; border: 2.5px solid var(--border); max-width: 600px; margin: 0 auto; }
+    .quiz-card { background: var(--card-bg); padding: 1.5rem; border-radius: 1.5rem; border: 2.5px solid var(--border); max-width: 600px; margin: 0 auto; }
     .q-opt {
-      width: 100%; padding: 1.2rem; margin-top: 1rem; border-radius: 1.2rem;
+      width: 100%; padding: 1rem; margin-top: 0.8rem; border-radius: 1rem;
       border: 2px solid var(--border); background: var(--card-bg);
-      font-family: 'Noto Serif Bengali', serif; font-size: 1.3rem; text-align: left;
+      font-family: 'Noto Serif Bengali', serif; font-size: 1.1rem; text-align: left; cursor: pointer;
     }
-    .q-opt.correct { background: var(--correct); color: white; border-color: var(--correct); }
-    .q-opt.wrong { background: var(--wrong); color: white; border-color: var(--wrong); }
 
     /* --- Pagination --- */
-    .pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.6rem; margin: 2rem 0; }
-    .jump-box { display: flex; gap: 0.4rem; align-items: center; background: var(--card-bg); padding: 0.4rem 1rem; border-radius: 0.8rem; border: 1px solid var(--border); font-weight: 700; }
+    .pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.4rem; margin: 1.5rem 0; }
 
     /* --- Bottom Nav --- */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 5rem;
+      position: fixed; bottom: 0; left: 0; right: 0; height: 4.8rem;
       background: var(--nav-bg); backdrop-filter: blur(15px); border-top: 1px solid var(--border);
       display: flex; justify-content: space-around; align-items: center; z-index: 200;
       transition: transform 0.4s ease;
     }
-    .bottom-nav.nav-hidden { transform: translateY(100%); }
     .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--text-sub); flex: 1; cursor: pointer; }
     .nav-item.active { color: var(--accent); }
-    .nav-icon { font-size: 1.6rem; }
-    .nav-label { font-size: 0.75rem; font-weight: 700; margin-top: 0.2rem; }
+    .nav-icon { font-size: 1.4rem; }
+    .nav-label { font-size: 0.7rem; font-weight: 700; margin-top: 0.2rem; }
 
     .hidden { display: none !important; }
-    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-size: 0.9rem; opacity: 0; transition: 0.3s; z-index: 2000; font-weight: 600; }
+    #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.85rem; opacity: 0; transition: 0.3s; z-index: 2000; font-weight: 600; pointer-events: none; width: max-content; max-width: 90vw; text-align: center; }
+
+    @media (max-width: 400px) {
+        .stat-chip span:last-child { font-size: 0.9rem; }
+        .c-en { font-size: 1.3rem; }
+        .logo { font-size: 1rem; }
+    }
   </style>
 </head>
 <body class="elite-mode">
@@ -199,10 +224,10 @@
 <header class="header" id="main-header">
   <div class="header-inner">
     <div class="header-top">
-      <div class="logo" id="logo-home">ELITE VOCAB</div>
+      <div class="logo" id="logo-home" onclick="location.reload()">ELITE VOCAB</div>
       <div class="header-actions">
-        <button class="action-btn-circle" id="btn-full" title="Full Screen">⛶</button>
-        <button class="action-btn-circle" id="btn-blind" title="Study Mode">👁️</button>
+        <button class="action-btn-circle" id="btn-full">⛶</button>
+        <button class="action-btn-circle" id="btn-blind">👁️</button>
         <button class="action-btn-circle" id="theme-toggle">🌙</button>
         <button class="action-btn-circle" id="btn-header-hide">🔼</button>
         <button class="action-btn-circle" id="nav-toggle">☰</button>
@@ -222,13 +247,13 @@
   <!-- BROWSE -->
   <section id="v-browse">
     <div class="controls">
-      <input type="text" id="search-input" placeholder="Search..." style="flex: 1; min-width: 140px;">
-      <select id="f-cat"><option value="">Categories</option></select>
-      <select id="f-status"><option value="">Status</option><option value="m">Mastered</option><option value="r">Review</option></select>
-      <select id="f-sort"><option value="oldest">Oldest First</option><option value="newest">Newest First</option></select>
-      <div style="display: flex; gap: 5px;">
-        <button class="btn btn-outline" id="f-dec">A-</button>
-        <button class="btn btn-outline" id="f-inc">A+</button>
+      <input type="text" id="search-input" placeholder="Search..." style="flex: 1; min-width: 120px;" oninput="renderBrowse()">
+      <select id="f-cat" style="flex: 1;" onchange="renderBrowse()"><option value="">Categories</option></select>
+      <select id="f-status" onchange="renderBrowse()"><option value="">Status</option><option value="m">Mastered</option><option value="r">Review</option></select>
+      <div style="display: flex; gap: 5px; width: 100%;">
+          <select id="f-sort" style="flex: 1;" onchange="renderBrowse()"><option value="oldest">Oldest First</option><option value="newest">Newest First</option></select>
+          <button class="btn btn-outline" id="f-dec">A-</button>
+          <button class="btn btn-outline" id="f-inc">A+</button>
       </div>
     </div>
     <div id="grid-browse" class="word-grid"></div>
@@ -239,15 +264,15 @@
   <section id="v-flash" class="hidden">
     <div class="controls">
       <select id="fc-cat" style="flex: 1;"><option value="">All Categories</option></select>
-      <button class="btn btn-primary" onclick="initFC()">Start Session</button>
-      <label style="display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:700;">
+      <button class="btn btn-primary" onclick="initFC()">Start</button>
+      <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
         <input type="checkbox" id="fc-auto-speak"> Speak
       </label>
     </div>
     <div class="fc-wrap">
-      <div class="session-progress-wrap"><div id="session-progress-fill"></div></div>
+      <div class="session-progress-wrap" style="height:6px; margin-bottom:10px;"><div id="session-progress-fill"></div></div>
       <div id="fc-card" class="flip-card">
-        <p style="font-weight:700; opacity:0.5;">Choose a category above</p>
+        <p style="font-weight:700; opacity:0.5;">Select Category & Start</p>
       </div>
       <div class="fc-nav">
         <button class="btn btn-outline fc-nav-btn" onclick="fcPrev()">PREV</button>
@@ -260,7 +285,7 @@
   <section id="v-quiz" class="hidden">
     <div class="controls">
       <select id="quiz-cat" style="flex: 1;"><option value="">All Categories</option></select>
-      <button class="btn btn-primary" onclick="startQuiz()">Generate Duel</button>
+      <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
     </div>
     <div id="quiz-area"></div>
   </section>
@@ -268,8 +293,8 @@
   <!-- SAVED -->
   <section id="v-saved" class="hidden">
     <div class="controls" style="justify-content: space-between; align-items:center;">
-      <h3 style="font-weight:800;">My Library</h3>
-      <button class="btn" style="color:var(--wrong); border:2px solid var(--wrong);" onclick="clearProg()">Reset Data</button>
+      <h3 style="font-weight:800;">Library</h3>
+      <button class="btn" style="color:var(--wrong); border:2px solid var(--wrong); padding: 4px 10px;" onclick="clearProg()">Reset</button>
     </div>
     <div id="grid-saved" class="word-grid"></div>
   </section>
@@ -297,7 +322,6 @@
   const pgSize = 15;
   let isBlindMode = false;
   
-  // Font Scaling Logic
   let currentFontSize = parseInt(localStorage.getItem('hscEliteFont')) || 16;
   function updateRootFontSize() {
     document.documentElement.style.fontSize = currentFontSize + 'px';
@@ -312,7 +336,7 @@
   // --- Fullscreen ---
   function toggleFull() {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
+    else if (document.exitFullscreen) document.exitFullscreen();
   }
   document.getElementById('btn-full').onclick = toggleFull;
 
@@ -368,7 +392,7 @@
       initFilters();
       renderBrowse();
       updateStats();
-    } catch(e) { showToast("Data error. Check connection."); }
+    } catch(e) { showToast("Connection error."); }
   }
 
   function updateStats() {
@@ -419,9 +443,9 @@
     return `
       <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')}">
         <div class="c-tag">${v.cat}</div>
-        <div class="c-header">
+        <div class="c-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
           <div class="c-en">${v.en}</div>
-          <button style="background:none; border:none; font-size:1.8rem; cursor:pointer;" onclick="speak('${v.en.replace(/'/g,"")}')">🔊</button>
+          <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="speak('${v.en.replace(/'/g,"")}')">🔊</button>
         </div>
         <div class="c-bn">${v.bn}</div>
         ${v.ex_en ? `<div class="c-ex-en">${v.ex_en}</div>` : ''}
@@ -438,11 +462,11 @@
   function renderPag(total) {
     const box = document.getElementById('pag-box');
     if(total <= 1) { box.innerHTML = ''; return; }
-    let html = `<div class="jump-box"><input type="number" id="jump-in" style="width:40px; border:none; background:none; text-align:center; color:var(--accent); font-weight:800;" value="${curPg}"> <span>/ ${total}</span> <button class="btn btn-primary" style="padding:4px 8px; border-radius:8px;" onclick="doJump(${total})">Go</button></div>`;
+    let html = `<div class="jump-box"><input type="number" id="jump-in" style="width:35px; border:none; background:none; text-align:center; color:var(--accent); font-weight:800;" value="${curPg}"> <span style="font-size:0.8rem;">/ ${total}</span> <button class="btn btn-primary" style="padding:2px 6px; border-radius:5px; font-size:0.7rem;" onclick="doJump(${total})">Go</button></div>`;
     for(let i = 1; i <= total; i++) {
       if(i === 1 || i === total || (i >= curPg - 1 && i <= curPg + 1)) {
-        html += `<button class="btn ${i === curPg ? 'btn-primary' : 'btn-outline'}" style="min-width:35px;" onclick="setPg(${i})">${i}</button>`;
-      } else if(i === curPg - 2 || i === curPg + 2) html += `<span style="opacity:0.4">...</span>`;
+        html += `<button class="btn ${i === curPg ? 'btn-primary' : 'btn-outline'}" style="min-width:30px; padding:5px;" onclick="setPg(${i})">${i}</button>`;
+      } else if(i === curPg - 2 || i === curPg + 2) html += `<span style="opacity:0.4">..</span>`;
     }
     box.innerHTML = html;
   }
@@ -475,28 +499,50 @@
 
   document.getElementById('nav-toggle').onclick = function() {
     const nav = document.getElementById('main-nav');
-    const isHidden = nav.classList.toggle('nav-hidden');
-    document.body.classList.toggle('no-nav');
+    nav.classList.toggle('nav-hidden');
   };
 
   // --- Flashcards ---
+  document.getElementById('fc-card').onclick = function() {
+    if(fcList.length > 0) {
+        fcFlipped = !fcFlipped;
+        renderFC();
+    }
+  };
+
   function initFC() {
     const cat = document.getElementById('fc-cat').value;
     fcList = vocab.filter(v => !cat || v.cat === cat).sort(() => Math.random() - 0.5);
+    if(!fcList.length) { showToast("No words found."); return; }
     fcIdx = 0; fcFlipped = false;
-    if(fcList.length) renderFC();
+    renderFC();
   }
+
   function renderFC() {
     const v = fcList[fcIdx];
     const card = document.getElementById('fc-card');
     document.getElementById('session-progress-fill').style.width = ((fcIdx + 1) / fcList.length * 100) + '%';
+    
+    // Auto-font sizing for long words
+    const enSizeClass = v.en.length > 12 ? 'style="font-size: 1.8rem"' : '';
+
     if(!fcFlipped) {
-      card.innerHTML = `<button class="fc-speak-btn" onclick="event.stopPropagation(); speak('${v.en.replace(/'/g,"")}')">🔊</button><span class="c-tag">${v.cat}</span><h2 style="font-size: 3.5rem; font-weight:800;">${v.en}</h2><p style="margin-top:40px; font-size:1.1rem; color:var(--text-sub); font-weight:600;">Tap to see meaning</p>`;
+      card.innerHTML = `
+        <button class="fc-speak-btn" onclick="event.stopPropagation(); speak('${v.en.replace(/'/g,"")}')">🔊</button>
+        <span class="c-tag">${v.cat}</span>
+        <div class="fc-en-text" ${enSizeClass}>${v.en}</div>
+        <p style="margin-top:20px; font-size:0.9rem; color:var(--text-sub); font-weight:600;">Tap to Flip</p>`;
       if(document.getElementById('fc-auto-speak').checked) speak(v.en);
     } else {
-      card.innerHTML = `<h2 style="font-family:'Noto Serif Bengali'; font-size: 2.6rem;">${v.bn}</h2><div style="margin-top:20px; padding: 25px; background:var(--ex-bg); border-radius:20px; width:100%;"><p style="font-style:italic; margin-bottom:12px;">${v.ex_en || ''}</p><span class="fc-ex-bn-big">${v.ex_bn || ''}</span></div>`;
+      card.innerHTML = `
+        <div class="fc-bn-text">${v.bn}</div>
+        <div class="fc-detail-box">
+          <p class="fc-ex-en-small">${v.ex_en || ''}</p>
+          <span class="fc-ex-bn-small">${v.ex_bn || ''}</span>
+        </div>`;
     }
   }
+
   function fcNext() { if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
   function fcPrev() { if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
 
@@ -512,35 +558,47 @@
     });
     qIdx = 0; qScore = 0; renderQuiz();
   }
+
   function renderQuiz() {
     const area = document.getElementById('quiz-area');
     if(qIdx >= qList.length) {
-      area.innerHTML = `<div style="text-align:center; padding:40px;"><h2>🎯 Result: ${qScore}/10</h2><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:20px; padding:12px 30px;">Restart</button></div>`;
+      area.innerHTML = `<div style="text-align:center; padding:40px;"><h2>🎯 Score: ${qScore}/10</h2><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:20px; padding:10px 25px;">Try Again</button></div>`;
       return;
     }
     const q = qList[qIdx];
-    area.innerHTML = `<div class="quiz-card"><p style="font-size:1rem; font-weight:800; color:var(--accent);">Q ${qIdx+1}/10</p><h2 style="font-size:2.8rem; margin:15px 0;">${q.cor.en}</h2><div id="q-opts">${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}</div></div>`;
+    area.innerHTML = `
+      <div class="quiz-card">
+        <p style="font-size:0.8rem; font-weight:800; color:var(--accent);">Q ${qIdx+1}/10</p>
+        <h2 style="font-size:2rem; margin:10px 0;">${q.cor.en}</h2>
+        <div id="q-opts">
+            ${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}
+        </div>
+      </div>`;
   }
+
   function checkQ(btn, isCor) {
     const p = btn.parentNode; if(p.classList.contains('lock')) return;
     p.classList.add('lock');
-    if(isCor) { btn.classList.add('correct'); qScore++; } else { 
+    if(isCor) { btn.classList.add('correct'); qScore++; } 
+    else { 
         btn.classList.add('wrong'); 
-        Array.from(p.children).forEach(b => { if(quizList[qIdx].cor.bn === b.innerText) b.classList.add('correct'); });
+        Array.from(p.children).forEach(b => { if(b.innerText === qList[qIdx].cor.bn) b.classList.add('correct'); });
     }
-    setTimeout(() => { qIdx++; renderQuiz(); }, 1400);
+    setTimeout(() => { qIdx++; renderQuiz(); }, 1200);
   }
 
   function renderSaved() {
     const list = vocab.filter(v => progress[v.en]);
     const grid = document.getElementById('grid-saved');
-    if(!list.length) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; opacity:0.5;"><h3>No words saved.</h3></div>`; return; }
+    if(!list.length) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:80px; opacity:0.5;"><h3>Library empty</h3></div>`; return; }
     grid.innerHTML = list.map(v => createCard(v)).join('');
   }
 
   function speak(t) {
+    if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; u.rate = 0.85;
+    const u = new SpeechSynthesisUtterance(t); 
+    u.lang = 'en-US'; u.rate = 0.9;
     window.speechSynthesis.speak(u);
   }
 
@@ -553,13 +611,16 @@
     const cats = [...new Set(vocab.map(v => v.cat))].sort();
     ['f-cat', 'fc-cat', 'quiz-cat'].forEach(id => {
       const el = document.getElementById(id);
-      cats.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
+      if(el) {
+          el.innerHTML = id === 'f-cat' ? '<option value="">Categories</option>' : '<option value="">All Categories</option>';
+          cats.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
+      }
     });
   }
 
   function clearProg() { if(confirm("Clear progress?")) { progress = {}; updateStats(); renderBrowse(); renderSaved(); } }
 
-  loadData();
+  window.onload = loadData;
 </script>
 </body>
 </html>
