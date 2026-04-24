@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en" id="root-html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HSC Elite | Master Vocab</title>
+  <script>
+    (function() {
+      const savedDark = localStorage.getItem('hscEliteDark');
+      if (savedDark === 'dark') document.documentElement.classList.add('dark');
+      
+      const savedFont = localStorage.getItem('hscEliteFont');
+      if (savedFont) document.documentElement.style.fontSize = savedFont + 'px';
+      else document.documentElement.style.fontSize = '16px';
+    })();
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Serif+Bengali:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --accent: #2563eb;
+      --border: #e2e8f0;
+      --nav-bg: rgba(255, 255, 255, 0.96);
+      --correct: #10b981;
+      --wrong: #ef4444;
+      --review: #f59e0b;
+      --ex-bg: #f1f5f9;
+    }
+
+    html.dark {
+      --bg-main: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --accent: #60a5fa;
+      --border: #334155;
+      --nav-bg: rgba(15, 23, 42, 0.96);
+      --correct: #34d399;
+      --wrong: #fb7185;
+      --review: #fbbf24;
+      --ex-bg: #0f172a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      padding-bottom: 110px;
+      transition: background 0.3s;
+      line-height: 1.5;
+    }
+
+    /* --- Smart Header --- */
+    .header {
+      background: var(--nav-bg); backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 1000; padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      transition: transform 0.4s ease;
+    }
+    .header.header-hidden { transform: translateY(-100%); pointer-events: none; }
+    
+    #header-show-tab {
+        position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+        background: var(--accent); color: white; padding: 5px 20px;
+        border-radius: 0 0 15px 15px; font-size: 0.75rem; font-weight: 800;
+        z-index: 1001; cursor: pointer; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .header-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.8rem; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); cursor: pointer; }
+    
+    .header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .action-btn-circle {
+        width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1.5px solid var(--border);
+        background: var(--card-bg); color: var(--text-main); display: flex;
+        align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem;
+    }
+    .action-btn-circle.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+    /* BIG STATS BUTTONS */
+    .stats-row { display: flex; gap: 0.6rem; justify-content: space-between; align-items: center; }
+    .stat-chip { 
+      flex: 1; height: 3.8rem; border-radius: 1rem; border: 1.5px solid var(--border);
+      background: var(--card-bg); display: flex; flex-direction: column; 
+      align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+    }
+    .stat-chip span:first-child { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; opacity: 0.7; }
+    .stat-chip span:last-child { font-size: 1.1rem; font-weight: 800; }
+    
+    .stat-chip.total { border-color: var(--accent); color: var(--accent); }
+    .stat-chip.m { border-color: var(--correct); color: var(--correct); }
+    .stat-chip.r { border-color: var(--review); color: var(--review); }
+
+    .overall-progress-wrap { width: 100%; height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+    #overall-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.5s ease; }
+
+    /* --- Blind Mode --- */
+    .blind-mode .c-tag, .blind-mode .c-bn, .blind-mode .c-ex-en, 
+    .blind-mode .c-pron, .blind-mode .c-ex-bn, .blind-mode .c-family-wrap,
+    .blind-mode .c-actions { display: none !important; }
+    .blind-mode .wcard { min-height: 5rem; justify-content: center; border-left-width: 4px; }
+
+    .main-container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .controls { 
+      background: var(--card-bg); padding: 1rem; border-radius: 1.2rem; border: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.5rem;
+    }
+    input, select, .btn {
+      padding: 0.7rem; border-radius: 0.8rem; border: 1.5px solid var(--border);
+      background: var(--card-bg); color: var(--text-main); font-size: 0.9rem; outline: none;
+    }
+    .btn { font-weight: 700; cursor: pointer; }
+    .btn-outline { border: 2px solid var(--accent); color: var(--accent); width: 3rem; }
+    .btn-primary { background: var(--accent); color: white; border: none; }
+
+    /* --- Word Cards (Strict Order: E, A+B, D, C, F, G) --- */
+    .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .wcard {
+      background: var(--card-bg); border-radius: 1.8rem; padding: 1.5rem;
+      border: 1.5px solid var(--border); display: flex; flex-direction: column; 
+    }
+    .wcard.mastered { border-left: 0.6rem solid var(--correct); }
+    .wcard.reviewing { border-left: 0.6rem solid var(--review); }
+    
+    .c-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: white; padding: 4px 10px; border-radius: 6px; display: inline-block; margin-bottom: 1rem; align-self: flex-start; }
+    .c-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.3rem; }
+    .c-en { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+    .c-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.45rem; color: var(--text-main); font-weight: 600; margin-bottom: 1rem; }
+    .c-ex-en { font-size: 1rem; font-style: italic; color: var(--text-sub); margin-bottom: 0.8rem; line-height: 1.4; padding-left: 0.8rem; border-left: 3px solid var(--accent); }
+    .c-pron { font-size: 0.85rem; color: #14b8a6; font-family: monospace; margin-bottom: 1rem; font-weight: 700; }
+    
+    /* BIGGER BENGALI EXAMPLES */
+    .c-ex-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.35rem; color: var(--accent); margin-bottom: 1.2rem; font-weight: 600; line-height: 1.5; }
+    
+    .c-family-wrap { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .c-family { font-size: 0.75rem; background: var(--ex-bg); padding: 4px 10px; border-radius: 8px; color: var(--text-sub); border: 1px solid var(--border); font-weight: 600; }
+
+    .c-actions { display: flex; gap: 0.6rem; margin-top: auto; border-top: 1.5px solid var(--border); padding-top: 1.2rem; }
+    .s-btn { flex: 1; padding: 0.7rem; border-radius: 0.8rem; border: 2px solid var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; background: transparent; color: var(--text-main); }
+    .s-btn.m.active { background: var(--correct); color: white; border-color: var(--correct); }
+    .s-btn.r.active { background: var(--review); color: white; border-color: var(--review); }
+
+    /* --- Flashcards --- */
+    .fc-wrap { max-width: 500px; margin: 0 auto; }
+    .session-progress-wrap { width: 100%; height: 8px; background: var(--border); border-radius: 10px; margin-bottom: 1.5rem; overflow: hidden; }
+    #session-progress-fill { height: 100%; width: 0%; background: var(--accent); transition: width 0.3s ease; }
+    .flip-card {
+      background: var(--card-bg); height: 26rem; border-radius: 2rem; border: 2.5px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 2.5rem; cursor: pointer; position: relative;
+    }
+    .fc-speak-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 2rem; background: none; border: none; cursor: pointer; }
+    .fc-ex-bn-big { font-family: 'Noto Serif Bengali', serif; font-size: 1.45rem; color: var(--accent); font-weight: 700; margin-top: 1rem; display: block; line-height: 1.5; }
+    .fc-nav { display: flex; justify-content: center; gap: 1.2rem; margin-top: 2rem; }
+    .fc-nav-btn { width: 8rem; height: 3.2rem; font-size: 1rem; }
+
+    /* --- Quiz --- */
+    .quiz-card { background: var(--card-bg); padding: 2rem; border-radius: 2rem; border: 2.5px solid var(--border); max-width: 600px; margin: 0 auto; }
+    .q-opt {
+      width: 100%; padding: 1.2rem; margin-top: 1rem; border-radius: 1.2rem;
+      border: 2px solid var(--border); background: var(--card-bg);
+      font-family: 'Noto Serif Bengali', serif; font-size: 1.3rem; text-align: left;
+    }
+    .q-opt.correct { background: var(--correct); color: white; border-color: var(--correct); }
+    .q-opt.wrong { background: var(--wrong); color: white; border-color: var(--wrong); }
+
+    /* --- Pagination --- */
+    .pagination { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 0.6rem; margin: 2rem 0; }
+    .jump-box { display: flex; gap: 0.4rem; align-items: center; background: var(--card-bg); padding: 0.4rem 1rem; border-radius: 0.8rem; border: 1px solid var(--border); font-weight: 700; }
+
+    /* --- Bottom Nav --- */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 5rem;
+      background: var(--nav-bg); backdrop-filter: blur(15px); border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center; z-index: 200;
+      transition: transform 0.4s ease;
+    }
+    .bottom-nav.nav-hidden { transform: translateY(100%); }
+    .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--text-sub); flex: 1; cursor: pointer; }
+    .nav-item.active { color: var(--accent); }
+    .nav-icon { font-size: 1.6rem; }
+    .nav-label { font-size: 0.75rem; font-weight: 700; margin-top: 0.2rem; }
+
+    .hidden { display: none !important; }
+    #toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-size: 0.9rem; opacity: 0; transition: 0.3s; z-index: 2000; font-weight: 600; }
+  </style>
+</head>
+<body class="elite-mode">
+
+<div id="toast">Message</div>
+<div id="header-show-tab" onclick="toggleHeaderManual(false)">Show Header ▽</div>
+
+<header class="header" id="main-header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo" id="logo-home">ELITE VOCAB</div>
+      <div class="header-actions">
+        <button class="action-btn-circle" id="btn-full" title="Full Screen">⛶</button>
+        <button class="action-btn-circle" id="btn-blind" title="Study Mode">👁️</button>
+        <button class="action-btn-circle" id="theme-toggle">🌙</button>
+        <button class="action-btn-circle" id="btn-header-hide">🔼</button>
+        <button class="action-btn-circle" id="nav-toggle">☰</button>
+      </div>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-chip total" id="st-all"><span>Total</span><span id="c-all">0</span></div>
+      <div class="stat-chip m" id="st-m"><span>Mastered</span><span id="c-m">0</span></div>
+      <div class="stat-chip r" id="st-r"><span>Review</span><span id="c-r">0</span></div>
+    </div>
+    <div class="overall-progress-wrap"><div id="overall-progress-fill"></div></div>
+  </div>
+</header>
+
+<div class="main-container">
+  <!-- BROWSE -->
+  <section id="v-browse">
+    <div class="controls">
+      <input type="text" id="search-input" placeholder="Search..." style="flex: 1; min-width: 140px;">
+      <select id="f-cat"><option value="">Categories</option></select>
+      <select id="f-status"><option value="">Status</option><option value="m">Mastered</option><option value="r">Review</option></select>
+      <select id="f-sort"><option value="oldest">Oldest First</option><option value="newest">Newest First</option></select>
+      <div style="display: flex; gap: 5px;">
+        <button class="btn btn-outline" id="f-dec">A-</button>
+        <button class="btn btn-outline" id="f-inc">A+</button>
+      </div>
+    </div>
+    <div id="grid-browse" class="word-grid"></div>
+    <div id="pag-box" class="pagination"></div>
+  </section>
+
+  <!-- FLASHCARDS -->
+  <section id="v-flash" class="hidden">
+    <div class="controls">
+      <select id="fc-cat" style="flex: 1;"><option value="">All Categories</option></select>
+      <button class="btn btn-primary" onclick="initFC()">Start Session</button>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.9rem; font-weight:700;">
+        <input type="checkbox" id="fc-auto-speak"> Speak
+      </label>
+    </div>
+    <div class="fc-wrap">
+      <div class="session-progress-wrap"><div id="session-progress-fill"></div></div>
+      <div id="fc-card" class="flip-card">
+        <p style="font-weight:700; opacity:0.5;">Choose a category above</p>
+      </div>
+      <div class="fc-nav">
+        <button class="btn btn-outline fc-nav-btn" onclick="fcPrev()">PREV</button>
+        <button class="btn btn-outline fc-nav-btn" onclick="fcNext()">NEXT</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="v-quiz" class="hidden">
+    <div class="controls">
+      <select id="quiz-cat" style="flex: 1;"><option value="">All Categories</option></select>
+      <button class="btn btn-primary" onclick="startQuiz()">Generate Duel</button>
+    </div>
+    <div id="quiz-area"></div>
+  </section>
+
+  <!-- SAVED -->
+  <section id="v-saved" class="hidden">
+    <div class="controls" style="justify-content: space-between; align-items:center;">
+      <h3 style="font-weight:800;">My Library</h3>
+      <button class="btn" style="color:var(--wrong); border:2px solid var(--wrong);" onclick="clearProg()">Reset Data</button>
+    </div>
+    <div id="grid-saved" class="word-grid"></div>
+  </section>
+</div>
+
+<nav class="bottom-nav" id="main-nav">
+  <button class="nav-item active" onclick="showV('browse')">
+    <div class="nav-icon">📚</div><div class="nav-label">Browse</div>
+  </button>
+  <button class="nav-item" onclick="showV('flash')">
+    <div class="nav-icon">🃏</div><div class="nav-label">Flash</div>
+  </button>
+  <button class="nav-item" onclick="showV('quiz')">
+    <div class="nav-icon">⚡</div><div class="nav-label">Quiz</div>
+  </button>
+  <button class="nav-item" onclick="showV('saved')">
+    <div class="nav-icon">⭐</div><div class="nav-label">Saved</div>
+  </button>
+</nav>
+
+<script>
+  let vocab = [];
+  let progress = JSON.parse(localStorage.getItem('hscEliteData') || '{}');
+  let curPg = 1;
+  const pgSize = 15;
+  let isBlindMode = false;
+  
+  // Font Scaling Logic
+  let currentFontSize = parseInt(localStorage.getItem('hscEliteFont')) || 16;
+  function updateRootFontSize() {
+    document.documentElement.style.fontSize = currentFontSize + 'px';
+    localStorage.setItem('hscEliteFont', currentFontSize);
+  }
+  document.getElementById('f-inc').onclick = () => { currentFontSize += 2; updateRootFontSize(); };
+  document.getElementById('f-dec').onclick = () => { currentFontSize = Math.max(10, currentFontSize - 2); updateRootFontSize(); };
+
+  let fcList = [], fcIdx = 0, fcFlipped = false;
+  let qList = [], qIdx = 0, qScore = 0;
+
+  // --- Fullscreen ---
+  function toggleFull() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+  document.getElementById('btn-full').onclick = toggleFull;
+
+  // --- Smart Header ---
+  let lastScrollY = window.scrollY;
+  let headerManuallyHidden = false;
+  window.addEventListener("scroll", () => {
+    if (headerManuallyHidden) return;
+    const header = document.getElementById("main-header");
+    if (window.scrollY > lastScrollY && window.scrollY > 150) header.classList.add("header-hidden");
+    else header.classList.remove("header-hidden");
+    lastScrollY = window.scrollY;
+  });
+
+  function toggleHeaderManual(hide) {
+    const header = document.getElementById("main-header");
+    const tab = document.getElementById("header-show-tab");
+    headerManuallyHidden = hide;
+    if (hide) { header.classList.add("header-hidden"); tab.style.display = "block"; }
+    else { header.classList.remove("header-hidden"); tab.style.display = "none"; }
+  }
+  document.getElementById('btn-header-hide').onclick = () => toggleHeaderManual(true);
+
+  // --- CSV Logic ---
+  function parseCSV(text) {
+    const lines = text.split(/\r?\n/).filter(l => l.trim());
+    const data = [];
+    for(let i = 1; i < lines.length; i++) {
+      const row = []; let cell = '', inQ = false;
+      for(let char of lines[i]) {
+        if(char === '"') inQ = !inQ;
+        else if(char === ',' && !inQ) { row.push(cell.trim()); cell = ''; }
+        else cell += char;
+      }
+      row.push(cell.trim());
+      if(row[0] && row[1]) {
+        data.push({
+          en: row[0], bn: row[1], pron: row[2] || '', 
+          ex_en: row[3] || '', cat: row[4] || 'Misc',
+          ex_bn: row[5] || '', family: row[6] || ''
+        });
+      }
+    }
+    return data;
+  }
+
+  async function loadData() {
+    const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8DBdIY6VFMiSQvoLP_VY-6iE-zYfh_ClBckWTI00eQXNMa_JnXilcdVoE6FRaSt8TeOHh2kCE0Wp6/pub?gid=0&single=true&output=csv';
+    try {
+      const res = await fetch(url);
+      const txt = await res.text();
+      vocab = parseCSV(txt);
+      initFilters();
+      renderBrowse();
+      updateStats();
+    } catch(e) { showToast("Data error. Check connection."); }
+  }
+
+  function updateStats() {
+    const m = Object.values(progress).filter(v => v === 'm').length;
+    const r = Object.values(progress).filter(v => v === 'r').length;
+    const total = vocab.length;
+    document.getElementById('c-all').innerText = total;
+    document.getElementById('c-m').innerText = m;
+    document.getElementById('c-r').innerText = r;
+    if (total > 0) document.getElementById('overall-progress-fill').style.width = ((m + r) / total * 100) + '%';
+    localStorage.setItem('hscEliteData', JSON.stringify(progress));
+  }
+
+  function toggleStatus(en, status) {
+    if(progress[en] === status) delete progress[en];
+    else progress[en] = status;
+    updateStats();
+    renderBrowse(false);
+    if(!document.getElementById('v-saved').classList.contains('hidden')) renderSaved();
+  }
+
+  function renderBrowse(scroll = true) {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    const cat = document.getElementById('f-cat').value;
+    const stat = document.getElementById('f-status').value;
+    const sort = document.getElementById('f-sort').value;
+
+    let filtered = vocab.filter(v => {
+      const matchSearch = v.en.toLowerCase().includes(query) || v.bn.includes(query);
+      const matchCat = !cat || v.cat === cat;
+      const matchStat = !stat || progress[v.en] === stat;
+      return matchSearch && matchCat && matchStat;
+    });
+
+    if (sort === 'newest') filtered = [...filtered].reverse();
+
+    const total = Math.ceil(filtered.length / pgSize);
+    curPg = Math.min(curPg, total || 1);
+    const grid = document.getElementById('grid-browse');
+    grid.innerHTML = filtered.slice((curPg - 1) * pgSize, curPg * pgSize).map(v => createCard(v)).join('');
+    renderPag(total);
+    if(scroll) window.scrollTo(0,0);
+  }
+
+  function createCard(v) {
+    const s = progress[v.en];
+    const fam = v.family ? v.family.split(',').map(f => `<span class="c-family">${f.trim()}</span>`).join('') : '';
+    return `
+      <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')}">
+        <div class="c-tag">${v.cat}</div>
+        <div class="c-header">
+          <div class="c-en">${v.en}</div>
+          <button style="background:none; border:none; font-size:1.8rem; cursor:pointer;" onclick="speak('${v.en.replace(/'/g,"")}')">🔊</button>
+        </div>
+        <div class="c-bn">${v.bn}</div>
+        ${v.ex_en ? `<div class="c-ex-en">${v.ex_en}</div>` : ''}
+        <div class="c-pron">${v.pron}</div>
+        ${v.ex_bn ? `<div class="c-ex-bn">${v.ex_bn}</div>` : ''}
+        <div class="c-family-wrap">${fam}</div>
+        <div class="c-actions">
+          <button class="s-btn m ${s==='m'?'active':''}" onclick="toggleStatus('${v.en.replace(/'/g,"\\'")}', 'm')">Master</button>
+          <button class="s-btn r ${s==='r'?'active':''}" onclick="toggleStatus('${v.en.replace(/'/g,"\\'")}', 'r')">Review</button>
+        </div>
+      </div>`;
+  }
+
+  function renderPag(total) {
+    const box = document.getElementById('pag-box');
+    if(total <= 1) { box.innerHTML = ''; return; }
+    let html = `<div class="jump-box"><input type="number" id="jump-in" style="width:40px; border:none; background:none; text-align:center; color:var(--accent); font-weight:800;" value="${curPg}"> <span>/ ${total}</span> <button class="btn btn-primary" style="padding:4px 8px; border-radius:8px;" onclick="doJump(${total})">Go</button></div>`;
+    for(let i = 1; i <= total; i++) {
+      if(i === 1 || i === total || (i >= curPg - 1 && i <= curPg + 1)) {
+        html += `<button class="btn ${i === curPg ? 'btn-primary' : 'btn-outline'}" style="min-width:35px;" onclick="setPg(${i})">${i}</button>`;
+      } else if(i === curPg - 2 || i === curPg + 2) html += `<span style="opacity:0.4">...</span>`;
+    }
+    box.innerHTML = html;
+  }
+  function setPg(p) { curPg = p; renderBrowse(); }
+  function doJump(max) { const p = parseInt(document.getElementById('jump-in').value); if(p >= 1 && p <= max) setPg(p); }
+
+  function showV(v) {
+    document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(`v-${v}`).classList.remove('hidden');
+    const idxMap = { 'browse': 0, 'flash': 1, 'quiz': 2, 'saved': 3 };
+    document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
+    if(v === 'saved') renderSaved();
+    window.scrollTo(0,0);
+  }
+
+  // --- Features ---
+  document.getElementById('btn-blind').onclick = function() {
+    isBlindMode = !isBlindMode;
+    document.body.classList.toggle('blind-mode');
+    this.classList.toggle('active');
+    showToast(isBlindMode ? "Study Mode: ON" : "Study Mode: OFF");
+  };
+
+  document.getElementById('theme-toggle').onclick = function() {
+    const isD = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('hscEliteDark', isD ? 'dark' : 'light');
+    this.innerText = isD ? "☀️" : "🌙";
+  };
+
+  document.getElementById('nav-toggle').onclick = function() {
+    const nav = document.getElementById('main-nav');
+    const isHidden = nav.classList.toggle('nav-hidden');
+    document.body.classList.toggle('no-nav');
+  };
+
+  // --- Flashcards ---
+  function initFC() {
+    const cat = document.getElementById('fc-cat').value;
+    fcList = vocab.filter(v => !cat || v.cat === cat).sort(() => Math.random() - 0.5);
+    fcIdx = 0; fcFlipped = false;
+    if(fcList.length) renderFC();
+  }
+  function renderFC() {
+    const v = fcList[fcIdx];
+    const card = document.getElementById('fc-card');
+    document.getElementById('session-progress-fill').style.width = ((fcIdx + 1) / fcList.length * 100) + '%';
+    if(!fcFlipped) {
+      card.innerHTML = `<button class="fc-speak-btn" onclick="event.stopPropagation(); speak('${v.en.replace(/'/g,"")}')">🔊</button><span class="c-tag">${v.cat}</span><h2 style="font-size: 3.5rem; font-weight:800;">${v.en}</h2><p style="margin-top:40px; font-size:1.1rem; color:var(--text-sub); font-weight:600;">Tap to see meaning</p>`;
+      if(document.getElementById('fc-auto-speak').checked) speak(v.en);
+    } else {
+      card.innerHTML = `<h2 style="font-family:'Noto Serif Bengali'; font-size: 2.6rem;">${v.bn}</h2><div style="margin-top:20px; padding: 25px; background:var(--ex-bg); border-radius:20px; width:100%;"><p style="font-style:italic; margin-bottom:12px;">${v.ex_en || ''}</p><span class="fc-ex-bn-big">${v.ex_bn || ''}</span></div>`;
+    }
+  }
+  function fcNext() { if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
+  function fcPrev() { if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
+
+  // --- Quiz ---
+  function startQuiz() {
+    const cat = document.getElementById('quiz-cat').value;
+    const pool = vocab.filter(v => !cat || v.cat === cat);
+    if(pool.length < 4) return showToast("Min 4 words required.");
+    qList = pool.sort(() => Math.random() - 0.5).slice(0, 10).map(cor => {
+      const wrg = pool.filter(p => p.en !== cor.en).sort(() => Math.random() - 0.5).slice(0, 3);
+      const opts = [cor, ...wrg].sort(() => Math.random() - 0.5);
+      return { cor, opts };
+    });
+    qIdx = 0; qScore = 0; renderQuiz();
+  }
+  function renderQuiz() {
+    const area = document.getElementById('quiz-area');
+    if(qIdx >= qList.length) {
+      area.innerHTML = `<div style="text-align:center; padding:40px;"><h2>🎯 Result: ${qScore}/10</h2><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:20px; padding:12px 30px;">Restart</button></div>`;
+      return;
+    }
+    const q = qList[qIdx];
+    area.innerHTML = `<div class="quiz-card"><p style="font-size:1rem; font-weight:800; color:var(--accent);">Q ${qIdx+1}/10</p><h2 style="font-size:2.8rem; margin:15px 0;">${q.cor.en}</h2><div id="q-opts">${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}</div></div>`;
+  }
+  function checkQ(btn, isCor) {
+    const p = btn.parentNode; if(p.classList.contains('lock')) return;
+    p.classList.add('lock');
+    if(isCor) { btn.classList.add('correct'); qScore++; } else { 
+        btn.classList.add('wrong'); 
+        Array.from(p.children).forEach(b => { if(quizList[qIdx].cor.bn === b.innerText) b.classList.add('correct'); });
+    }
+    setTimeout(() => { qIdx++; renderQuiz(); }, 1400);
+  }
+
+  function renderSaved() {
+    const list = vocab.filter(v => progress[v.en]);
+    const grid = document.getElementById('grid-saved');
+    if(!list.length) { grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:100px; opacity:0.5;"><h3>No words saved.</h3></div>`; return; }
+    grid.innerHTML = list.map(v => createCard(v)).join('');
+  }
+
+  function speak(t) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+  }
+
+  function showToast(m) {
+    const t = document.getElementById('toast'); t.innerText = m; t.style.opacity = '1';
+    setTimeout(() => t.style.opacity = '0', 2500);
+  }
+
+  function initFilters() {
+    const cats = [...new Set(vocab.map(v => v.cat))].sort();
+    ['f-cat', 'fc-cat', 'quiz-cat'].forEach(id => {
+      const el = document.getElementById(id);
+      cats.forEach(c => el.innerHTML += `<option value="${c}">${c}</option>`);
+    });
+  }
+
+  function clearProg() { if(confirm("Clear progress?")) { progress = {}; updateStats(); renderBrowse(); renderSaved(); } }
+
+  loadData();
+</script>
+</body>
+</html>
