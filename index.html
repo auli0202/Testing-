@@ -196,11 +196,31 @@
 
     /* --- Bottom Nav --- */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 4.8rem;
-      background: var(--nav-bg); backdrop-filter: blur(15px); border-top: 1px solid var(--border);
-      display: flex; justify-content: space-around; align-items: center; z-index: 200;
-      transition: transform 0.4s ease;
-    }
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  right: 0; 
+  height: 4.8rem;
+  background: var(--nav-bg); 
+  backdrop-filter: blur(15px); 
+  border-top: 1px solid var(--border);
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
+  z-index: 2000; /* Increased z-index */
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transition */
+}
+
+/* This is the class that hides the nav */
+.bottom-nav.nav-hidden { 
+  transform: translateY(100%) !important; 
+  pointer-events: none; 
+}
+
+/* Remove bottom padding from body when nav is hidden */
+body.no-nav {
+  padding-bottom: 20px !important;
+}
     .nav-item { border: none; background: none; display: flex; flex-direction: column; align-items: center; color: var(--text-sub); flex: 1; cursor: pointer; }
     .nav-item.active { color: var(--accent); }
     .nav-icon { font-size: 1.4rem; }
@@ -498,9 +518,21 @@
   };
 
   document.getElementById('nav-toggle').onclick = function() {
-    const nav = document.getElementById('main-nav');
-    nav.classList.toggle('nav-hidden');
-  };
+  const nav = document.getElementById('main-nav');
+  const body = document.body;
+  
+  // Toggle the hidden class on the nav
+  nav.classList.toggle('nav-hidden');
+  
+  // Toggle a class on the body to remove the bottom padding
+  body.classList.toggle('no-nav');
+  
+  // Optional: Provide feedback on the toggle button
+  this.classList.toggle('active');
+  
+  const isHidden = nav.classList.contains('nav-hidden');
+  showToast(isHidden ? "Navbar Hidden" : "Navbar Visible");
+};
 
   // --- Flashcards ---
   document.getElementById('fc-card').onclick = function() {
