@@ -440,6 +440,22 @@ html.dark .btn-outline {
     border-radius: 2rem;
     border: 2px solid var(--border);
 }
+
+.fc-nav { 
+    display: flex; 
+    justify-content: center; 
+    gap: 1rem; 
+    margin-top: 1.5rem; 
+}
+
+.fc-nav-btn { 
+    flex: 1; 
+    max-width: 150px; /* Limits size on PC */
+    height: 3.5rem; 
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
 /* end by me*/
 
   </style>
@@ -517,7 +533,13 @@ html.dark .btn-outline {
     <div id="fc-card" class="flip-card">
         <p style="font-weight:700; opacity:0.5;">Select Category & Start</p>
     </div>
-    <!-- ... nav buttons ... -->
+
+    <!-- ADD THIS SECTION BACK -->
+    <div class="fc-nav">
+        <button class="btn btn-outline fc-nav-btn" onclick="fcPrev()">PREV</button>
+        <button class="btn btn-outline fc-nav-btn" onclick="fcNext()">NEXT</button>
+    </div>
+</div>
 </div>
   </section>
 
