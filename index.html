@@ -532,6 +532,29 @@ html.dark .btn-outline {
         display: flex;
     }
 }
+
+@media (max-width: 650px) {
+    /* ... existing mobile code ... */
+
+    .control-group {
+        grid-column: span 2; /* Keep it full width */
+        display: flex;
+        justify-content: space-between; /* This pushes the dropdown left and buttons right */
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+    #f-sort {
+        flex: 1; /* Dropdown takes available space on the left */
+    }
+
+    .font-btns {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0; /* Prevents buttons from shrinking */
+    }
+}
 /* end by me*/
 
   </style>
