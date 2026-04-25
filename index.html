@@ -496,6 +496,42 @@ html.dark .btn-outline {
     background: var(--card-bg);
     box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Subtle shadow */
 }
+/* --- Mobile Only Adjustment --- */
+@media (max-width: 650px) {
+    .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Creates two equal columns */
+        gap: 0.6rem;
+        padding: 0.7rem;
+    }
+    
+    /* Search takes the full top row */
+    #search-input {
+        grid-column: span 2;
+        width: 100%;
+    }
+    
+    /* Categories sits on the left (50%) */
+    #f-cat {
+        grid-column: span 1;
+        width: 100%;
+        min-width: 0; /* Prevents overflow */
+    }
+    
+    /* Status sits on the right (50%) - Fixing your arrow issue */
+    #f-status {
+        grid-column: span 1;
+        width: 100%;
+        min-width: 0;
+    }
+    
+    /* Sort & Font buttons take the full bottom row */
+    .control-group {
+        grid-column: span 2;
+        width: 100%;
+        display: flex;
+    }
+}
 /* end by me*/
 
   </style>
