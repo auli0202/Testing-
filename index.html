@@ -29,6 +29,7 @@
       --review: #f59e0b;
       --ex-bg: #f1f5f9;
       --family-w: #000;
+      --header:#000;
     }
 
     html.dark {
@@ -44,6 +45,7 @@
   --review: #eab308;
   --ex-bg: #111827;         /* Contrast background for examples */
   --family-w:#dadee3;
+  --header:#ffffff;
 }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -458,6 +460,31 @@ html.dark .btn-outline {
     font-weight: 800;
     letter-spacing: 1px;
 }
+
+.headerside{
+  color: var(--header);
+}
+
+/* Limit the size of controls on PC */
+@media (min-width: 768px) {
+    .controls {
+        max-width: 900px; /* Prevents the bar from being too wide */
+        margin-left: auto;
+        margin-right: auto;
+        justify-content: center; /* Centers the dropdown and button */
+    }
+
+    /* Fixed width for category dropdowns */
+    #quiz-cat, #fc-cat, #f-cat {
+        min-width: 250px;
+        max-width: 400px;
+    }
+}
+
+/* Ensure the search input also looks good */
+#search-input {
+    min-width: 200px;
+}
 /* end by me*/
 
   </style>
@@ -470,7 +497,7 @@ html.dark .btn-outline {
 <header class="header" id="main-header">
   <div class="header-inner">
     <div class="header-top">
-      <div class="logo" id="logo-home" onclick="location.reload()">HSC<span style="color: black;">VB</span></div>
+      <div class="logo" id="logo-home" onclick="location.reload()">HSC<span class="headerside">VB</span></div>
       
       <!-- ADD THIS NEW DIV FOR PC USERS -->
       <nav class="desktop-nav">
@@ -503,7 +530,9 @@ html.dark .btn-outline {
   <section id="v-browse">
     <div class="controls">
       <input type="text" id="search-input" placeholder="Search..." style="flex: 1; min-width: 120px;" oninput="renderBrowse()">
-      <select id="f-cat" style="flex: 1;" onchange="renderBrowse()"><option value="">Categories</option></select>
+      <!-- Find this line in <section id="v-browse"> -->
+      <select id="f-cat" onchange="renderBrowse()"><option value="">Categories</option></select>
+<!-- REMOVED style="flex: 1;" -->
       <select id="f-status" onchange="renderBrowse()"><option value="">Status</option><option value="m">Mastered</option><option value="r">Review</option></select>
       <div style="display: flex; gap: 5px; width: 100%;">
           <select id="f-sort" style="flex: 1;" onchange="renderBrowse()"><option value="oldest">Oldest First</option><option value="newest">Newest First</option></select>
@@ -518,7 +547,9 @@ html.dark .btn-outline {
   <!-- FLASHCARDS -->
   <section id="v-flash" class="hidden">
     <div class="controls">
-      <select id="fc-cat" style="flex: 1;"><option value="">All Categories</option></select>
+      <!-- Find this line in <section id="v-flash"> -->
+    <select id="fc-cat"><option value="">All Categories</option></select>
+<!-- REMOVED style="flex: 1;" -->
       <button class="btn btn-primary" onclick="initFC()">Start</button>
       <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
         <input type="checkbox" id="fc-auto-speak"> Speak
@@ -548,7 +579,9 @@ html.dark .btn-outline {
   <!-- QUIZ -->
   <section id="v-quiz" class="hidden">
     <div class="controls">
-      <select id="quiz-cat" style="flex: 1;"><option value="">All Categories</option></select>
+      <!-- Find this line in <section id="v-quiz"> -->
+    <select id="quiz-cat"><option value="">All Categories</option></select>
+<!-- REMOVED style="flex: 1;" -->
       <button class="btn btn-primary" onclick="startQuiz()">Start Quiz</button>
     </div>
     <div id="quiz-area"></div>
