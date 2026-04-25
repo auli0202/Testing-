@@ -485,6 +485,17 @@ html.dark .btn-outline {
 #search-input {
     min-width: 200px;
 }
+.fc-nav-btn { 
+    flex: 1; 
+    max-width: 150px;
+    height: 3.5rem; 
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Subtle shadow */
+}
 /* end by me*/
 
   </style>
@@ -945,6 +956,44 @@ document.getElementById('f-status').addEventListener('change', function() {
   function clearProg() { if(confirm("Clear progress?")) { progress = {}; updateStats(); renderBrowse(); renderSaved(); } }
 
   window.onload = loadData;
+  // Function for subtle vibration on mobile
+function triggerHaptic() {
+    if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(10); // Very short 10ms pulse
+    }
+}
+
+// UPDATE: Add triggerHaptic() to your existing functions
+// Example for fcNext:
+function fcNext() { 
+    triggerHaptic(); // Add this
+    if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } 
+}
+
+// Example for fcPrev:
+function fcPrev() { 
+    triggerHaptic(); // Add this
+    if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } 
+}
+
+// Add it to the Flip logic
+document.getElementById('fc-card').onclick = function() {
+    triggerHaptic(); // Add this
+    if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
+};
+
+// Add it to Quiz Options
+function checkQ(btn, isCor) {
+    triggerHaptic(); // Add this
+    const container = document.getElementById('q-opts');
+    // ... existing logic ...
+}
+
+// Add it to Nav Items
+function showV(v) {
+    triggerHaptic(); // Add this
+    // ... existing logic ...
+}
 </script>
 </body>
 </html>
