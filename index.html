@@ -559,6 +559,24 @@ html.dark .btn-outline {
         flex-shrink: 0; /* Prevents buttons from shrinking */
     }
 }
+/* Importance Star Styling */
+.star-badge {
+    color: #f59e0b; /* Golden Yellow */
+    font-size: 1.2rem;
+    margin-left: 8px;
+    filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.4));
+    animation: star-glow 2s infinite alternate;
+}
+
+@keyframes star-glow {
+    from { opacity: 0.8; transform: scale(1); }
+    to { opacity: 1; transform: scale(1.1); }
+}
+
+/* Optional: Subtle background for highly important cards */
+.wcard.is-important {
+    background: linear-gradient(to bottom right, var(--card-bg), var(--ex-bg));
+}
 /* end by me*/
 
   </style>
@@ -609,7 +627,11 @@ html.dark .btn-outline {
 <!-- REMOVED style="flex: 1;" -->
       <select id="f-status" onchange="renderBrowse()"><option value="">Status</option><option value="m">Mastered</option><option value="r">Review</option></select>
       <div style="display: flex; gap: 5px; width: 100%;">
-          <select id="f-sort" style="flex: 1;" onchange="renderBrowse()"><option value="oldest">Oldest First</option><option value="newest">Newest First</option></select>
+          <select id="f-sort" onchange="renderBrowse()">
+          <option value="oldest">Oldest First</option>
+          <option value="newest">Newest First</option>
+          <option value="important">Most Important</option> <!-- New Option -->
+          </select>
           <button class="btn btn-outline" id="f-dec">A-</button>
           <button class="btn btn-outline" id="f-inc">A+</button>
       </div>
@@ -704,14 +726,12 @@ html.dark .btn-outline {
   let fcList = [], fcIdx = 0, fcFlipped = false;
   let qList = [], qIdx = 0, qScore = 0;
 
-  // Helper: Haptic Feedback
   function triggerHaptic() {
     if (window.navigator && window.navigator.vibrate) {
         window.navigator.vibrate(15);
     }
   }
 
-  // --- Fullscreen ---
   function toggleFull() {
     triggerHaptic();
     if (!document.fullscreenElement) document.documentElement.requestFullscreen();
@@ -719,7 +739,6 @@ html.dark .btn-outline {
   }
   document.getElementById('btn-full').onclick = toggleFull;
 
-  // --- Smart Header ---
   let lastScrollY = window.scrollY;
   let headerManuallyHidden = false;
   window.addEventListener("scroll", () => {
@@ -740,7 +759,6 @@ html.dark .btn-outline {
   }
   document.getElementById('btn-header-hide').onclick = () => toggleHeaderManual(true);
 
-  // --- CSV Logic ---
   function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
     const data = [];
@@ -756,7 +774,8 @@ html.dark .btn-outline {
         data.push({
           en: row[0], bn: row[1], pron: row[2] || '', 
           ex_en: row[3] || '', cat: row[4] || 'Misc',
-          ex_bn: row[5] || '', family: row[6] || ''
+          ex_bn: row[5] || '', family: row[6] || '',
+          important: parseInt(row[7]) || 0 
         });
       }
     }
@@ -825,6 +844,8 @@ html.dark .btn-outline {
     });
 
     if (sort === 'newest') filtered = [...filtered].reverse();
+    else if (sort === 'important') filtered.sort((a, b) => b.important - a.important);
+
     const total = Math.ceil(filtered.length / pgSize);
     curPg = Math.min(curPg, total || 1);
     const grid = document.getElementById('grid-browse');
@@ -836,11 +857,14 @@ html.dark .btn-outline {
   function createCard(v) {
     const s = progress[v.en];
     const fam = v.family ? v.family.split(',').map(f => `<span class="c-family">${f.trim()}</span>`).join('') : '';
+    const isHighImportance = v.important >= 4;
+    const impBadge = isHighHighImportance = v.important >= 4 ? `<span class="star-badge">★</span>` : '';
+    
     return `
-      <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')}">
+      <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')} ${isHighImportance ? 'is-important' : ''}">
         <div class="c-tag">${v.cat}</div>
-        <div class="c-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-          <div class="c-en">${v.en}</div>
+        <div class="c-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="c-en">${v.en}${impBadge}</div>
           <button style="background:none; border:none; font-size:1.5rem; cursor:pointer;" onclick="speak('${v.en.replace(/'/g,"")}')">🔊</button>
         </div>
         <div class="c-bn">${v.bn}</div>
@@ -873,22 +897,13 @@ html.dark .btn-outline {
     triggerHaptic();
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     document.getElementById(`v-${v}`).classList.remove('hidden');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.nav-item, .d-nav-item').forEach(n => n.classList.remove('active'));
     const idxMap = { 'browse': 0, 'flash': 1, 'quiz': 2, 'saved': 3 };
     if(document.querySelectorAll('.nav-item')[idxMap[v]]) document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
-    document.querySelectorAll('.d-nav-item').forEach(n => n.classList.remove('active'));
     if(document.querySelectorAll('.d-nav-item')[idxMap[v]]) document.querySelectorAll('.d-nav-item')[idxMap[v]].classList.add('active');
     if(v === 'saved') renderSaved();
     window.scrollTo(0,0);
   }
-
-  document.getElementById('btn-blind').onclick = function() {
-    triggerHaptic();
-    isBlindMode = !isBlindMode;
-    document.body.classList.toggle('blind-mode');
-    this.classList.toggle('active');
-    showToast(isBlindMode ? "Study Mode: ON" : "Study Mode: OFF");
-  };
 
   document.getElementById('theme-toggle').onclick = function() {
     triggerHaptic();
@@ -904,7 +919,6 @@ html.dark .btn-outline {
     document.body.classList.toggle('no-nav');
   };
 
-  // --- Flashcards ---
   document.getElementById('fc-card').onclick = function() {
     triggerHaptic();
     if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
@@ -926,11 +940,13 @@ html.dark .btn-outline {
     document.getElementById('session-progress-fill').style.width = ((fcIdx + 1) / fcList.length * 100) + '%';
     document.getElementById('fc-counter-text').innerText = `${fcIdx + 1} / ${fcList.length}`;
     const enSizeClass = v.en.length > 12 ? 'style="font-size: 1.8rem"' : '';
+    const star = v.important >= 4 ? '<span class="star-badge">★</span>' : '';
+
     if(!fcFlipped) {
       card.innerHTML = `
         <button class="fc-speak-btn" onclick="event.stopPropagation(); speak('${v.en.replace(/'/g,"")}')">🔊</button>
         <span class="c-tag">${v.cat}</span>
-        <div class="fc-en-text" ${enSizeClass}>${v.en}</div>
+        <div class="fc-en-text" ${enSizeClass}>${v.en}${star}</div>
         <p style="margin-top:20px; font-size:0.9rem; color:var(--text-sub); font-weight:600;">Tap to Flip</p>`;
       if(document.getElementById('fc-auto-speak').checked) speak(v.en);
     } else {
@@ -946,7 +962,6 @@ html.dark .btn-outline {
   function fcNext() { triggerHaptic(); if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
   function fcPrev() { triggerHaptic(); if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
 
-  // --- Quiz ---
   function startQuiz() {
     triggerHaptic();
     const cat = document.getElementById('quiz-cat').value;
