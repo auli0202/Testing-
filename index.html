@@ -234,6 +234,34 @@ body.no-nav {
         .c-en { font-size: 1.8rem; }
         .logo { font-size: 1.9rem; }
     }
+
+    /*new add from me*/
+    /* Stats Button Active States */
+.stat-chip.active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-chip.total.active {
+  background: var(--accent) !important;
+  color: white !important;
+}
+.stat-chip.m.active {
+  background: var(--correct) !important;
+  color: white !important;
+}
+.stat-chip.r.active {
+  background: var(--review) !important;
+  color: white !important;
+}
+
+/* Ensure text inside active chips stays white */
+.stat-chip.active span {
+  color: white !important;
+  opacity: 1 !important;
+}
+/* end by me*/
+
   </style>
 </head>
 <body class="elite-mode">
@@ -415,16 +443,59 @@ body.no-nav {
     } catch(e) { showToast("Connection error."); }
   }
 
-  function updateStats() {
-    const m = Object.values(progress).filter(v => v === 'm').length;
-    const r = Object.values(progress).filter(v => v === 'r').length;
+// 1. Update the function that counts words and updates the progress bar
+function updateStats() {
+    const mCount = Object.values(progress).filter(v => v === 'm').length;
+    const rCount = Object.values(progress).filter(v => v === 'r').length;
     const total = vocab.length;
+    
     document.getElementById('c-all').innerText = total;
-    document.getElementById('c-m').innerText = m;
-    document.getElementById('c-r').innerText = r;
-    if (total > 0) document.getElementById('overall-progress-fill').style.width = ((m + r) / total * 100) + '%';
+    document.getElementById('c-m').innerText = mCount;
+    document.getElementById('c-r').innerText = rCount;
+    
+    if (total > 0) {
+        document.getElementById('overall-progress-fill').style.width = ((mCount + rCount) / total * 100) + '%';
+    }
+    
     localStorage.setItem('hscEliteData', JSON.stringify(progress));
-  }
+}
+
+// 2. Function to handle clicking the stat chips
+function filterByStat(status) {
+    // Switch to Browse view automatically
+    showV('browse');
+    
+    // Update the dropdown menu to match
+    document.getElementById('f-status').value = status;
+    
+    // Update visual active state on the chips
+    document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
+    
+    if (status === 'm') document.getElementById('st-m').classList.add('active');
+    else if (status === 'r') document.getElementById('st-r').classList.add('active');
+    else document.getElementById('st-all').classList.add('active');
+    
+    // Trigger the actual word list refresh
+    curPg = 1; // Reset to page 1
+    renderBrowse();
+}
+
+// 3. Add the click listeners to the buttons (add this inside window.onload or at the bottom of script)
+document.getElementById('st-all').onclick = () => filterByStat('');
+document.getElementById('st-m').onclick = () => filterByStat('m');
+document.getElementById('st-r').onclick = () => filterByStat('r');
+
+// 4. Also update chips when the user manually changes the dropdown menu
+document.getElementById('f-status').addEventListener('change', function() {
+    const val = this.value;
+    document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
+    if (val === 'm') document.getElementById('st-m').classList.add('active');
+    else if (val === 'r') document.getElementById('st-r').classList.add('active');
+    else document.getElementById('st-all').classList.add('active');
+});
+
+
+
 
   function toggleStatus(en, status) {
     if(progress[en] === status) delete progress[en];
