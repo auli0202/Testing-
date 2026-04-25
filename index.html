@@ -12,7 +12,7 @@
     (function() {
       const savedDark = localStorage.getItem('hscEliteDark');
       if (savedDark === 'dark') document.documentElement.classList.add('dark');
-      
+
       const savedFont = localStorage.getItem('hscEliteFont');
       if (savedFont) document.documentElement.style.fontSize = savedFont + 'px';
       else document.documentElement.style.fontSize = '16px';
@@ -53,7 +53,7 @@
 }
 
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
+
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
@@ -72,7 +72,7 @@
       transition: transform 0.4s ease;
     }
     .header.header-hidden { transform: translateY(-100%); pointer-events: none; }
-    
+
     #header-show-tab {
         position: fixed; top: 0; left: 50%; transform: translateX(-50%);
         background: var(--accent); color: white; padding: 5px 20px;
@@ -83,7 +83,7 @@
     .header-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.8rem; }
     .header-top { display: flex; justify-content: space-between; align-items: center; }
     .logo { font-weight: 800; font-size: 2rem; color: var(--accent); cursor: pointer; }
-    
+
     .header-actions { display: flex; align-items: center; gap: 0.4rem; }
     .action-btn-circle {
         width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 1.5px solid var(--border);
@@ -102,7 +102,7 @@
     }
     .stat-chip span:first-child { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; opacity: 0.7; }
     .stat-chip span:last-child { font-size: 1rem; font-weight: 800; }
-    
+
     .stat-chip.total { border-color: var(--accent); color: var(--accent); }
     .stat-chip.m { border-color: var(--correct); color: var(--correct); }
     .stat-chip.r { border-color: var(--review); color: var(--review); }
@@ -137,7 +137,7 @@
     }
     .wcard.mastered { border-left: 0.5rem solid var(--correct); }
     .wcard.reviewing { border-left: 0.5rem solid var(--review); }
-    
+
     .c-tag { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: white; padding: 3px 8px; border-radius: 5px; display: inline-block; margin-bottom: 0.8rem; align-self: flex-start; }
     .c-en { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
     .c-bn { font-family: 'Noto Serif Bengali', serif; font-size: 1.3rem; color: var(--text-main); font-weight: 600; margin-bottom: 0.8rem; }
@@ -165,7 +165,7 @@
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
       overflow: hidden; /* Important: prevents card growing */
     }
-    
+
     /* Text scaling logic */
     .fc-en-text { 
         font-size: clamp(1.8rem, 10vw, 3.2rem); 
@@ -309,11 +309,11 @@ body.no-nav {
     .desktop-nav {
         display: flex; /* Show the header links */
     }
-    
+
     .bottom-nav {
         display: none !important; /* Hide the bottom bar on PC */
     }
-    
+
     body {
         padding-bottom: 40px; /* Remove the huge bottom padding on PC */
     }
@@ -508,27 +508,27 @@ html.dark .btn-outline {
         gap: 0.6rem;
         padding: 0.7rem;
     }
-    
+
     /* Search takes the full top row */
     #search-input {
         grid-column: span 2;
         width: 100%;
     }
-    
+
     /* Categories sits on the left (50%) */
     #f-cat {
         grid-column: span 1;
         width: 100%;
         min-width: 0; /* Prevents overflow */
     }
-    
+
     /* Status sits on the right (50%) - Fixing your arrow issue */
     #f-status {
         grid-column: span 1;
         width: 100%;
         min-width: 0;
     }
-    
+
     /* Sort & Font buttons take the full bottom row */
     .control-group {
         grid-column: span 2;
@@ -590,7 +590,7 @@ html.dark .btn-outline {
   <div class="header-inner">
     <div class="header-top">
       <div class="logo" id="logo-home" onclick="location.reload()">HSC<span class="headerside">VB</span></div>
-      
+
       <!-- ADD THIS NEW DIV FOR PC USERS -->
       <nav class="desktop-nav">
         <button class="d-nav-item active" onclick="showV('browse')">Browse</button>
@@ -607,7 +607,7 @@ html.dark .btn-outline {
         <button class="action-btn-circle" id="nav-toggle">☰</button>
       </div>
     </div>
-    
+
     <div class="stats-row">
       <div class="stat-chip total" id="st-all"><span>Total</span><span id="c-all">0</span></div>
       <div class="stat-chip m" id="st-m"><span>Mastered</span><span id="c-m">0</span></div>
@@ -642,29 +642,23 @@ html.dark .btn-outline {
 
   <!-- FLASHCARDS -->
   <section id="v-flash" class="hidden">
-    <div class="controls" style="justify-content: center;">
+    <div class="controls">
+      <!-- Find this line in <section id="v-flash"> -->
     <select id="fc-cat"><option value="">All Categories</option></select>
-    
-    <!-- ADD THIS DROPDOWN -->
-    <select id="fc-sort">
-        <option value="random">Shuffle (Random)</option>
-        <option value="important">Important Top</option>
-    </select>
-    
-    <button class="btn btn-primary" onclick="initFC()" style="padding: 0 1.5rem;">Start</button>
-    <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
+<!-- REMOVED style="flex: 1;" -->
+      <button class="btn btn-primary" onclick="initFC()">Start</button>
+      <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
         <input type="checkbox" id="fc-auto-speak"> Speak
-    </label>
-</div>
+      </label>
     </div>
     <div class="fc-wrap">
     <!-- Add this counter span -->
     <span class="fc-counter" id="fc-counter-text">0 / 0</span>
-    
+
     <div class="session-progress-wrap">
         <div id="session-progress-fill"></div>
     </div>
-    
+
     <div id="fc-card" class="flip-card">
         <p style="font-weight:700; opacity:0.5;">Select Category & Start</p>
     </div>
@@ -720,7 +714,7 @@ html.dark .btn-outline {
   let curPg = 1;
   const pgSize = 16;
   let isBlindMode = false;
-  
+
   let currentFontSize = parseInt(localStorage.getItem('hscEliteFont')) || 16;
   function updateRootFontSize() {
     document.documentElement.style.fontSize = currentFontSize + 'px';
@@ -732,11 +726,13 @@ html.dark .btn-outline {
   let fcList = [], fcIdx = 0, fcFlipped = false;
   let qList = [], qIdx = 0, qScore = 0;
 
+
   function triggerHaptic() {
     if (window.navigator && window.navigator.vibrate) {
         window.navigator.vibrate(15);
     }
   }
+
 
   function toggleFull() {
     triggerHaptic();
@@ -744,6 +740,7 @@ html.dark .btn-outline {
     else if (document.exitFullscreen) document.exitFullscreen();
   }
   document.getElementById('btn-full').onclick = toggleFull;
+
 
   let lastScrollY = window.scrollY;
   let headerManuallyHidden = false;
@@ -764,6 +761,7 @@ html.dark .btn-outline {
     else { header.classList.remove("header-hidden"); tab.style.display = "none"; }
   }
   document.getElementById('btn-header-hide').onclick = () => toggleHeaderManual(true);
+
 
   function parseCSV(text) {
     const lines = text.split(/\r?\n/).filter(l => l.trim());
@@ -864,7 +862,7 @@ html.dark .btn-outline {
     const s = progress[v.en];
     const fam = v.family ? v.family.split(',').map(f => `<span class="c-family">${f.trim()}</span>`).join('') : '';
     const isHighImportance = v.important >= 4;
-    const impBadge = isHighImportance ? `<span class="star-badge">★</span>` : '';
+    const impBadge = isHighHighImportance = v.important >= 4 ? `<span class="star-badge">★</span>` : '';
     
     return `
       <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')} ${isHighImportance ? 'is-important' : ''}">
@@ -906,18 +904,19 @@ html.dark .btn-outline {
     document.querySelectorAll('.nav-item, .d-nav-item').forEach(n => n.classList.remove('active'));
     const idxMap = { 'browse': 0, 'flash': 1, 'quiz': 2, 'saved': 3 };
     if(document.querySelectorAll('.nav-item')[idxMap[v]]) document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
+
     if(document.querySelectorAll('.d-nav-item')[idxMap[v]]) document.querySelectorAll('.d-nav-item')[idxMap[v]].classList.add('active');
     if(v === 'saved') renderSaved();
     window.scrollTo(0,0);
   }
 
-  document.getElementById('btn-blind').onclick = function() {
-    triggerHaptic();
-    isBlindMode = !isBlindMode;
-    document.body.classList.toggle('blind-mode');
-    this.classList.toggle('active');
-    showToast(isBlindMode ? "Study Mode: ON" : "Study Mode: OFF");
-  };
+
+
+
+
+
+
+
 
   document.getElementById('theme-toggle').onclick = function() {
     triggerHaptic();
@@ -933,6 +932,7 @@ html.dark .btn-outline {
     document.body.classList.toggle('no-nav');
   };
 
+
   document.getElementById('fc-card').onclick = function() {
     triggerHaptic();
     if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
@@ -941,16 +941,10 @@ html.dark .btn-outline {
   function initFC() {
     triggerHaptic();
     const cat = document.getElementById('fc-cat').value;
-    const sortMethod = document.getElementById('fc-sort').value;
-    fcList = vocab.filter(v => !cat || v.cat === cat);
-    if (!fcList.length) { showToast("No words found."); return; }
-
-    if (sortMethod === 'important') {
-        fcList.sort((a, b) => (b.important - a.important) || (Math.random() - 0.5));
-    } else {
-        fcList.sort(() => Math.random() - 0.5);
-    }
-    fcIdx = 0; fcFlipped = false; renderFC();
+    fcList = vocab.filter(v => !cat || v.cat === cat).sort(() => Math.random() - 0.5);
+    if(!fcList.length) { showToast("No words found."); return; }
+    fcIdx = 0; fcFlipped = false;
+    renderFC();
   }
 
   function renderFC() {
@@ -981,6 +975,7 @@ html.dark .btn-outline {
 
   function fcNext() { triggerHaptic(); if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
   function fcPrev() { triggerHaptic(); if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
+
 
   function startQuiz() {
     triggerHaptic();
