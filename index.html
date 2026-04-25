@@ -635,14 +635,22 @@ html.dark .btn-outline {
     document.documentElement.style.fontSize = currentFontSize + 'px';
     localStorage.setItem('hscEliteFont', currentFontSize);
   }
-  document.getElementById('f-inc').onclick = () => { currentFontSize += 2; updateRootFontSize(); };
-  document.getElementById('f-dec').onclick = () => { currentFontSize = Math.max(10, currentFontSize - 2); updateRootFontSize(); };
+  document.getElementById('f-inc').onclick = () => { triggerHaptic(); currentFontSize += 2; updateRootFontSize(); };
+  document.getElementById('f-dec').onclick = () => { triggerHaptic(); currentFontSize = Math.max(10, currentFontSize - 2); updateRootFontSize(); };
 
   let fcList = [], fcIdx = 0, fcFlipped = false;
   let qList = [], qIdx = 0, qScore = 0;
 
+  // Helper: Haptic Feedback
+  function triggerHaptic() {
+    if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(15);
+    }
+  }
+
   // --- Fullscreen ---
   function toggleFull() {
+    triggerHaptic();
     if (!document.fullscreenElement) document.documentElement.requestFullscreen();
     else if (document.exitFullscreen) document.exitFullscreen();
   }
@@ -660,6 +668,7 @@ html.dark .btn-outline {
   });
 
   function toggleHeaderManual(hide) {
+    triggerHaptic();
     const header = document.getElementById("main-header");
     const tab = document.getElementById("header-show-tab");
     headerManuallyHidden = hide;
@@ -703,22 +712,19 @@ html.dark .btn-outline {
     } catch(e) { showToast("Connection error."); }
   }
 
-function updateStats() {
+  function updateStats() {
     const mCount = Object.values(progress).filter(v => v === 'm').length;
     const rCount = Object.values(progress).filter(v => v === 'r').length;
     const total = vocab.length;
-    
     document.getElementById('c-all').innerText = total;
     document.getElementById('c-m').innerText = mCount;
     document.getElementById('c-r').innerText = rCount;
-    
-    if (total > 0) {
-        document.getElementById('overall-progress-fill').style.width = ((mCount + rCount) / total * 100) + '%';
-    }
+    if (total > 0) document.getElementById('overall-progress-fill').style.width = ((mCount + rCount) / total * 100) + '%';
     localStorage.setItem('hscEliteData', JSON.stringify(progress));
-}
+  }
 
-function filterByStat(status) {
+  function filterByStat(status) {
+    triggerHaptic();
     showV('browse');
     document.getElementById('f-status').value = status;
     document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
@@ -727,21 +733,14 @@ function filterByStat(status) {
     else document.getElementById('st-all').classList.add('active');
     curPg = 1;
     renderBrowse();
-}
+  }
 
-document.getElementById('st-all').onclick = () => filterByStat('');
-document.getElementById('st-m').onclick = () => filterByStat('m');
-document.getElementById('st-r').onclick = () => filterByStat('r');
-
-document.getElementById('f-status').addEventListener('change', function() {
-    const val = this.value;
-    document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
-    if (val === 'm') document.getElementById('st-m').classList.add('active');
-    else if (val === 'r') document.getElementById('st-r').classList.add('active');
-    else document.getElementById('st-all').classList.add('active');
-});
+  document.getElementById('st-all').onclick = () => filterByStat('');
+  document.getElementById('st-m').onclick = () => filterByStat('m');
+  document.getElementById('st-r').onclick = () => filterByStat('r');
 
   function toggleStatus(en, status) {
+    triggerHaptic();
     if(progress[en] === status) delete progress[en];
     else progress[en] = status;
     updateStats();
@@ -763,7 +762,6 @@ document.getElementById('f-status').addEventListener('change', function() {
     });
 
     if (sort === 'newest') filtered = [...filtered].reverse();
-
     const total = Math.ceil(filtered.length / pgSize);
     curPg = Math.min(curPg, total || 1);
     const grid = document.getElementById('grid-browse');
@@ -785,7 +783,7 @@ document.getElementById('f-status').addEventListener('change', function() {
         <div class="c-bn">${v.bn}</div>
         ${v.ex_en ? `<div class="c-ex-en">${v.ex_en}</div>` : ''}
         <div class="c-pron">${v.pron}</div>
-        ${v.ex_bn ? `<div class="c-ex-bn">${v.ex_bn}</div>` : ''}
+        ${v.ex_bn ? `<div class="c-ex-bn" style="color:var(--text-main)">${v.ex_bn}</div>` : ''}
         <div class="c-family-wrap">${fam}</div>
         <div class="c-actions">
           <button class="s-btn m ${s==='m'?'active':''}" onclick="toggleStatus('${v.en.replace(/'/g,"\\'")}', 'm')">Master</button>
@@ -805,10 +803,11 @@ document.getElementById('f-status').addEventListener('change', function() {
     }
     box.innerHTML = html;
   }
-  function setPg(p) { curPg = p; renderBrowse(); }
-  function doJump(max) { const p = parseInt(document.getElementById('jump-in').value); if(p >= 1 && p <= max) setPg(p); }
+  function setPg(p) { triggerHaptic(); curPg = p; renderBrowse(); }
+  function doJump(max) { triggerHaptic(); const p = parseInt(document.getElementById('jump-in').value); if(p >= 1 && p <= max) setPg(p); }
 
   function showV(v) {
+    triggerHaptic();
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     document.getElementById(`v-${v}`).classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -821,6 +820,7 @@ document.getElementById('f-status').addEventListener('change', function() {
   }
 
   document.getElementById('btn-blind').onclick = function() {
+    triggerHaptic();
     isBlindMode = !isBlindMode;
     document.body.classList.toggle('blind-mode');
     this.classList.toggle('active');
@@ -828,23 +828,27 @@ document.getElementById('f-status').addEventListener('change', function() {
   };
 
   document.getElementById('theme-toggle').onclick = function() {
+    triggerHaptic();
     const isD = document.documentElement.classList.toggle('dark');
     localStorage.setItem('hscEliteDark', isD ? 'dark' : 'light');
     this.innerText = isD ? "☀️" : "🌙";
   };
 
   document.getElementById('nav-toggle').onclick = function() {
+    triggerHaptic();
     const nav = document.getElementById('main-nav');
     nav.classList.toggle('nav-hidden');
     document.body.classList.toggle('no-nav');
-    showToast(nav.classList.contains('nav-hidden') ? "Navbar Hidden" : "Navbar Visible");
   };
 
+  // --- Flashcards ---
   document.getElementById('fc-card').onclick = function() {
+    triggerHaptic();
     if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
   };
 
   function initFC() {
+    triggerHaptic();
     const cat = document.getElementById('fc-cat').value;
     fcList = vocab.filter(v => !cat || v.cat === cat).sort(() => Math.random() - 0.5);
     if(!fcList.length) { showToast("No words found."); return; }
@@ -876,13 +880,15 @@ document.getElementById('f-status').addEventListener('change', function() {
     }
   }
 
-  function fcNext() { if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
-  function fcPrev() { if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
+  function fcNext() { triggerHaptic(); if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
+  function fcPrev() { triggerHaptic(); if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
 
+  // --- Quiz ---
   function startQuiz() {
+    triggerHaptic();
     const cat = document.getElementById('quiz-cat').value;
     const pool = vocab.filter(v => !cat || v.cat === cat);
-    if (pool.length < 4) { showToast("Need at least 4 words."); return; }
+    if (pool.length < 4) { showToast("Need 4 words."); return; }
     qList = pool.sort(() => Math.random() - 0.5).slice(0, 10).map(cor => {
         const wrg = pool.filter(p => p.en !== cor.en).sort(() => Math.random() - 0.5).slice(0, 3);
         const opts = [cor, ...wrg].sort(() => Math.random() - 0.5);
@@ -894,15 +900,15 @@ document.getElementById('f-status').addEventListener('change', function() {
   function renderQuiz() {
     const area = document.getElementById('quiz-area');
     if (qIdx >= qList.length) {
-        area.innerHTML = `<div class="quiz-score-screen"><h1 style="font-size:4rem;">${qScore >= 7 ? '🎯' : '💪'}</h1><h2 style="color:var(--text-main);">Quiz Finished!</h2><p style="font-size:1.5rem; color:var(--accent);">Score: ${qScore} / 10</p><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:25px; padding:12px 35px;">Restart</button></div>`;
+        area.innerHTML = `<div class="quiz-score-screen"><h1>${qScore >= 7 ? '🎯' : '💪'}</h1><h2>Quiz Finished!</h2><p>Score: ${qScore} / 10</p><button class="btn btn-primary" onclick="startQuiz()">Restart</button></div>`;
         return;
     }
     const q = qList[qIdx];
     area.innerHTML = `
       <div class="quiz-card">
         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-            <span style="font-size:0.85rem; font-weight:800; color:var(--accent);">Question ${qIdx + 1}/10</span>
-            <span style="font-size:0.85rem; font-weight:800; color:var(--correct);">Score: ${qScore}</span>
+            <span style="font-size:0.85rem; color:var(--accent);">Q ${qIdx + 1}/10</span>
+            <span style="font-size:0.85rem; color:var(--correct);">Score: ${qScore}</span>
         </div>
         <h2 style="font-size:2.2rem; color:var(--text-main);">${q.cor.en}</h2>
         <div id="q-opts">${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}</div>
@@ -910,6 +916,7 @@ document.getElementById('f-status').addEventListener('change', function() {
   }
 
   function checkQ(btn, isCor) {
+    triggerHaptic();
     const container = document.getElementById('q-opts');
     if (container.classList.contains('lock')) return;
     container.classList.add('lock');
@@ -953,47 +960,9 @@ document.getElementById('f-status').addEventListener('change', function() {
     });
   }
 
-  function clearProg() { if(confirm("Clear progress?")) { progress = {}; updateStats(); renderBrowse(); renderSaved(); } }
+  function clearProg() { triggerHaptic(); if(confirm("Clear progress?")) { progress = {}; updateStats(); renderBrowse(); renderSaved(); } }
 
   window.onload = loadData;
-  // Function for subtle vibration on mobile
-function triggerHaptic() {
-    if (window.navigator && window.navigator.vibrate) {
-        window.navigator.vibrate(10); // Very short 10ms pulse
-    }
-}
-
-// UPDATE: Add triggerHaptic() to your existing functions
-// Example for fcNext:
-function fcNext() { 
-    triggerHaptic(); // Add this
-    if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } 
-}
-
-// Example for fcPrev:
-function fcPrev() { 
-    triggerHaptic(); // Add this
-    if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } 
-}
-
-// Add it to the Flip logic
-document.getElementById('fc-card').onclick = function() {
-    triggerHaptic(); // Add this
-    if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
-};
-
-// Add it to Quiz Options
-function checkQ(btn, isCor) {
-    triggerHaptic(); // Add this
-    const container = document.getElementById('q-opts');
-    // ... existing logic ...
-}
-
-// Add it to Nav Items
-function showV(v) {
-    triggerHaptic(); // Add this
-    // ... existing logic ...
-}
 </script>
 </body>
 </html>
