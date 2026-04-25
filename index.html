@@ -635,7 +635,6 @@ html.dark .btn-outline {
     } catch(e) { showToast("Connection error."); }
   }
 
-// 1. Update the function that counts words and updates the progress bar
 function updateStats() {
     const mCount = Object.values(progress).filter(v => v === 'm').length;
     const rCount = Object.values(progress).filter(v => v === 'r').length;
@@ -648,36 +647,24 @@ function updateStats() {
     if (total > 0) {
         document.getElementById('overall-progress-fill').style.width = ((mCount + rCount) / total * 100) + '%';
     }
-    
     localStorage.setItem('hscEliteData', JSON.stringify(progress));
 }
 
-// 2. Function to handle clicking the stat chips
 function filterByStat(status) {
-    // Switch to Browse view automatically
     showV('browse');
-    
-    // Update the dropdown menu to match
     document.getElementById('f-status').value = status;
-    
-    // Update visual active state on the chips
     document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
-    
     if (status === 'm') document.getElementById('st-m').classList.add('active');
     else if (status === 'r') document.getElementById('st-r').classList.add('active');
     else document.getElementById('st-all').classList.add('active');
-    
-    // Trigger the actual word list refresh
-    curPg = 1; // Reset to page 1
+    curPg = 1;
     renderBrowse();
 }
 
-// 3. Add the click listeners to the buttons (add this inside window.onload or at the bottom of script)
 document.getElementById('st-all').onclick = () => filterByStat('');
 document.getElementById('st-m').onclick = () => filterByStat('m');
 document.getElementById('st-r').onclick = () => filterByStat('r');
 
-// 4. Also update chips when the user manually changes the dropdown menu
 document.getElementById('f-status').addEventListener('change', function() {
     const val = this.value;
     document.querySelectorAll('.stat-chip').forEach(c => c.classList.remove('active'));
@@ -685,9 +672,6 @@ document.getElementById('f-status').addEventListener('change', function() {
     else if (val === 'r') document.getElementById('st-r').classList.add('active');
     else document.getElementById('st-all').classList.add('active');
 });
-
-
-
 
   function toggleStatus(en, status) {
     if(progress[en] === status) delete progress[en];
@@ -756,38 +740,18 @@ document.getElementById('f-status').addEventListener('change', function() {
   function setPg(p) { curPg = p; renderBrowse(); }
   function doJump(max) { const p = parseInt(document.getElementById('jump-in').value); if(p >= 1 && p <= max) setPg(p); }
 
-  
-  
-  
-  
-  
   function showV(v) {
-    // 1. Hide all sections
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
     document.getElementById(`v-${v}`).classList.remove('hidden');
-
-    // 2. Handle Bottom Nav (Mobile) active states
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const idxMap = { 'browse': 0, 'flash': 1, 'quiz': 2, 'saved': 3 };
-    document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
-
-    // 3. Handle Desktop Nav (PC) active states
+    if(document.querySelectorAll('.nav-item')[idxMap[v]]) document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
     document.querySelectorAll('.d-nav-item').forEach(n => n.classList.remove('active'));
-    // Find the button by its onclick attribute or text
-    const dButtons = document.querySelectorAll('.d-nav-item');
-    dButtons[idxMap[v]].classList.add('active');
-
-    // 4. Update Saved grid if necessary and scroll up
+    if(document.querySelectorAll('.d-nav-item')[idxMap[v]]) document.querySelectorAll('.d-nav-item')[idxMap[v]].classList.add('active');
     if(v === 'saved') renderSaved();
     window.scrollTo(0,0);
-}
+  }
 
-
-
-
-
-
-  // --- Features ---
   document.getElementById('btn-blind').onclick = function() {
     isBlindMode = !isBlindMode;
     document.body.classList.toggle('blind-mode');
@@ -802,28 +766,14 @@ document.getElementById('f-status').addEventListener('change', function() {
   };
 
   document.getElementById('nav-toggle').onclick = function() {
-  const nav = document.getElementById('main-nav');
-  const body = document.body;
-  
-  // Toggle the hidden class on the nav
-  nav.classList.toggle('nav-hidden');
-  
-  // Toggle a class on the body to remove the bottom padding
-  body.classList.toggle('no-nav');
-  
-  // Optional: Provide feedback on the toggle button
-  this.classList.toggle('active');
-  
-  const isHidden = nav.classList.contains('nav-hidden');
-  showToast(isHidden ? "Navbar Hidden" : "Navbar Visible");
-};
+    const nav = document.getElementById('main-nav');
+    nav.classList.toggle('nav-hidden');
+    document.body.classList.toggle('no-nav');
+    showToast(nav.classList.contains('nav-hidden') ? "Navbar Hidden" : "Navbar Visible");
+  };
 
-  // --- Flashcards ---
   document.getElementById('fc-card').onclick = function() {
-    if(fcList.length > 0) {
-        fcFlipped = !fcFlipped;
-        renderFC();
-    }
+    if(fcList.length > 0) { fcFlipped = !fcFlipped; renderFC(); }
   };
 
   function initFC() {
@@ -834,31 +784,19 @@ document.getElementById('f-status').addEventListener('change', function() {
     renderFC();
   }
 
-  ffunction renderFC() {
+  function renderFC() {
     if (!fcList.length) return;
-    
     const v = fcList[fcIdx];
     const card = document.getElementById('fc-card');
-    const fill = document.getElementById('session-progress-fill');
-    const counterText = document.getElementById('fc-counter-text');
-
-    // 1. Update Progress Bar Width
-    const progressPercent = ((fcIdx + 1) / fcList.length) * 100;
-    fill.style.width = progressPercent + '%';
-
-    // 2. Update Progress Text (e.g., "5 / 20")
-    counterText.innerText = `${fcIdx + 1} / ${fcList.length}`;
-    
-    // 3. Handle Font Sizing for long words
+    document.getElementById('session-progress-fill').style.width = ((fcIdx + 1) / fcList.length * 100) + '%';
+    document.getElementById('fc-counter-text').innerText = `${fcIdx + 1} / ${fcList.length}`;
     const enSizeClass = v.en.length > 12 ? 'style="font-size: 1.8rem"' : '';
-
     if(!fcFlipped) {
       card.innerHTML = `
         <button class="fc-speak-btn" onclick="event.stopPropagation(); speak('${v.en.replace(/'/g,"")}')">🔊</button>
         <span class="c-tag">${v.cat}</span>
         <div class="fc-en-text" ${enSizeClass}>${v.en}</div>
         <p style="margin-top:20px; font-size:0.9rem; color:var(--text-sub); font-weight:600;">Tap to Flip</p>`;
-      
       if(document.getElementById('fc-auto-speak').checked) speak(v.en);
     } else {
       card.innerHTML = `
@@ -868,91 +806,53 @@ document.getElementById('f-status').addEventListener('change', function() {
           <span class="fc-ex-bn-small" style="color: var(--text-main);">${v.ex_bn || ''}</span>
         </div>`;
     }
-}
+  }
 
   function fcNext() { if(fcIdx < fcList.length - 1) { fcIdx++; fcFlipped = false; renderFC(); } }
   function fcPrev() { if(fcIdx > 0) { fcIdx--; fcFlipped = false; renderFC(); } }
 
-  // --- Quiz ---
   function startQuiz() {
     const cat = document.getElementById('quiz-cat').value;
     const pool = vocab.filter(v => !cat || v.cat === cat);
-    
-    if (pool.length < 4) {
-        showToast("Need at least 4 words in this category.");
-        return;
-    }
-
-    // Prepare 10 random questions
+    if (pool.length < 4) { showToast("Need at least 4 words."); return; }
     qList = pool.sort(() => Math.random() - 0.5).slice(0, 10).map(cor => {
         const wrg = pool.filter(p => p.en !== cor.en).sort(() => Math.random() - 0.5).slice(0, 3);
         const opts = [cor, ...wrg].sort(() => Math.random() - 0.5);
         return { cor, opts };
     });
-
-    qIdx = 0;
-    qScore = 0;
-    renderQuiz();
-}
+    qIdx = 0; qScore = 0; renderQuiz();
+  }
 
   function renderQuiz() {
     const area = document.getElementById('quiz-area');
-    
-    // Check if quiz is finished
     if (qIdx >= qList.length) {
-        area.innerHTML = `
-            <div class="quiz-score-screen">
-                <h1 style="font-size: 4rem;">${qScore >= 7 ? '🎯' : '💪'}</h1>
-                <h2 style="margin: 10px 0; color: var(--text-main);">Quiz Finished!</h2>
-                <p style="font-size: 1.5rem; font-weight: 800; color: var(--accent);">Score: ${qScore} / 10</p>
-                <button class="btn btn-primary" onclick="startQuiz()" style="margin-top:25px; padding:12px 35px; font-size:1rem;">Restart Duel</button>
-            </div>`;
+        area.innerHTML = `<div class="quiz-score-screen"><h1 style="font-size:4rem;">${qScore >= 7 ? '🎯' : '💪'}</h1><h2 style="color:var(--text-main);">Quiz Finished!</h2><p style="font-size:1.5rem; color:var(--accent);">Score: ${qScore} / 10</p><button class="btn btn-primary" onclick="startQuiz()" style="margin-top:25px; padding:12px 35px;">Restart</button></div>`;
         return;
     }
-
     const q = qList[qIdx];
     area.innerHTML = `
       <div class="quiz-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <span style="font-size:0.85rem; font-weight:800; color:var(--accent); background:var(--ex-bg); padding:4px 12px; border-radius:20px;">Question ${qIdx + 1}/10</span>
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <span style="font-size:0.85rem; font-weight:800; color:var(--accent);">Question ${qIdx + 1}/10</span>
             <span style="font-size:0.85rem; font-weight:800; color:var(--correct);">Score: ${qScore}</span>
         </div>
-        <h2 style="font-size:2.2rem; margin:15px 0; color:var(--text-main); line-height:1.2;">${q.cor.en}</h2>
-        <p style="font-size:0.9rem; color:var(--text-sub); margin-bottom:15px;">Choose the correct Bengali meaning:</p>
-        <div id="q-opts" class="quiz-options-container">
-            ${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}
-        </div>
+        <h2 style="font-size:2.2rem; color:var(--text-main);">${q.cor.en}</h2>
+        <div id="q-opts">${q.opts.map(o => `<div class="q-opt" onclick="checkQ(this, ${o.en === q.cor.en})">${o.bn}</div>`).join('')}</div>
       </div>`;
-}
+  }
 
-function checkQ(btn, isCor) {
+  function checkQ(btn, isCor) {
     const container = document.getElementById('q-opts');
-    if (container.classList.contains('lock')) return; // Prevent double clicks
-    
+    if (container.classList.contains('lock')) return;
     container.classList.add('lock');
-    const currentCorrectAnswer = qList[qIdx].cor.bn;
-
-    if (isCor) {
-        btn.classList.add('correct');
-        qScore++;
-        // Play subtle success sound logic could go here
-    } else {
-        btn.classList.add('wrong');
-        // Find and highlight the actual correct answer
-        const options = container.querySelectorAll('.q-opt');
-        options.forEach(opt => {
-            if (opt.innerText.trim() === currentCorrectAnswer.trim()) {
-                opt.classList.add('correct');
-            }
-        });
+    if (isCor) { btn.classList.add('correct'); qScore++; } 
+    else { 
+      btn.classList.add('wrong'); 
+      const options = container.querySelectorAll('.q-opt');
+      options.forEach(opt => { if (opt.innerText.trim() === qList[qIdx].cor.bn.trim()) opt.classList.add('correct'); });
     }
-
-    // Wait 1.4 seconds so user can see the result, then move to next
-    setTimeout(() => {
-        qIdx++;
-        renderQuiz();
-    }, 1400);
-
+    setTimeout(() => { qIdx++; renderQuiz(); }, 1400);
+  }
 
   function renderSaved() {
     const list = vocab.filter(v => progress[v.en]);
