@@ -260,6 +260,68 @@ body.no-nav {
   color: white !important;
   opacity: 1 !important;
 }
+
+
+
+
+
+
+/* --- Desktop Nav Styling (PC ONLY) --- */
+.desktop-nav {
+    display: none; /* Hidden by default (on mobile) */
+    gap: 1.5rem;
+    margin: 0 2rem;
+}
+
+.d-nav-item {
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    transition: 0.2s;
+}
+
+.d-nav-item:hover {
+    color: var(--accent);
+}
+
+.d-nav-item.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* --- RESPONSIVE LOGIC --- */
+
+/* For PC (Screens larger than 768px) */
+@media (min-width: 768px) {
+    .desktop-nav {
+        display: flex; /* Show the header links */
+    }
+    
+    .bottom-nav {
+        display: none !important; /* Hide the bottom bar on PC */
+    }
+    
+    body {
+        padding-bottom: 40px; /* Remove the huge bottom padding on PC */
+    }
+
+    #nav-toggle {
+        display: none; /* Hide the mobile menu toggle on PC */
+    }
+}
+
+/* For Mobile (Screens smaller than 767px) */
+@media (max-width: 767px) {
+    .desktop-nav {
+        display: none; /* Hide top links on Mobile */
+    }
+}
+
 /* end by me*/
 
   </style>
@@ -272,7 +334,16 @@ body.no-nav {
 <header class="header" id="main-header">
   <div class="header-inner">
     <div class="header-top">
-      <div class="logo" id="logo-home" onclick="location.reload()"><span style="color: black;">vocab</span>HSC</div>
+      <div class="logo" id="logo-home" onclick="location.reload()">HSC VOCAB</div>
+      
+      <!-- ADD THIS NEW DIV FOR PC USERS -->
+      <nav class="desktop-nav">
+        <button class="d-nav-item active" onclick="showV('browse')">Browse</button>
+        <button class="d-nav-item" onclick="showV('flash')">Flashcards</button>
+        <button class="d-nav-item" onclick="showV('quiz')">Quiz</button>
+        <button class="d-nav-item" onclick="showV('saved')">Library</button>
+      </nav>
+
       <div class="header-actions">
         <button class="action-btn-circle" id="btn-full">⛶</button>
         <button class="action-btn-circle" id="btn-blind">👁️</button>
@@ -564,15 +635,36 @@ document.getElementById('f-status').addEventListener('change', function() {
   function setPg(p) { curPg = p; renderBrowse(); }
   function doJump(max) { const p = parseInt(document.getElementById('jump-in').value); if(p >= 1 && p <= max) setPg(p); }
 
+  
+  
+  
+  
+  
   function showV(v) {
+    // 1. Hide all sections
     document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById(`v-${v}`).classList.remove('hidden');
+
+    // 2. Handle Bottom Nav (Mobile) active states
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const idxMap = { 'browse': 0, 'flash': 1, 'quiz': 2, 'saved': 3 };
     document.querySelectorAll('.nav-item')[idxMap[v]].classList.add('active');
+
+    // 3. Handle Desktop Nav (PC) active states
+    document.querySelectorAll('.d-nav-item').forEach(n => n.classList.remove('active'));
+    // Find the button by its onclick attribute or text
+    const dButtons = document.querySelectorAll('.d-nav-item');
+    dButtons[idxMap[v]].classList.add('active');
+
+    // 4. Update Saved grid if necessary and scroll up
     if(v === 'saved') renderSaved();
     window.scrollTo(0,0);
-  }
+}
+
+
+
+
+
 
   // --- Features ---
   document.getElementById('btn-blind').onclick = function() {
