@@ -642,14 +642,20 @@ html.dark .btn-outline {
 
   <!-- FLASHCARDS -->
   <section id="v-flash" class="hidden">
-    <div class="controls">
-      <!-- Find this line in <section id="v-flash"> -->
+    <div class="controls" style="justify-content: center;">
     <select id="fc-cat"><option value="">All Categories</option></select>
-<!-- REMOVED style="flex: 1;" -->
-      <button class="btn btn-primary" onclick="initFC()">Start</button>
-      <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
+    
+    <!-- ADD THIS DROPDOWN -->
+    <select id="fc-sort">
+        <option value="random">Shuffle (Random)</option>
+        <option value="important">Important Top</option>
+    </select>
+    
+    <button class="btn btn-primary" onclick="initFC()" style="padding: 0 1.5rem;">Start</button>
+    <label style="display:flex; align-items:center; gap:5px; font-size:0.8rem; font-weight:700;">
         <input type="checkbox" id="fc-auto-speak"> Speak
-      </label>
+    </label>
+</div>
     </div>
     <div class="fc-wrap">
     <!-- Add this counter span -->
@@ -858,7 +864,7 @@ html.dark .btn-outline {
     const s = progress[v.en];
     const fam = v.family ? v.family.split(',').map(f => `<span class="c-family">${f.trim()}</span>`).join('') : '';
     const isHighImportance = v.important >= 4;
-    const impBadge = isHighHighImportance = v.important >= 4 ? `<span class="star-badge">★</span>` : '';
+    const impBadge = isHighImportance ? `<span class="star-badge">★</span>` : '';
     
     return `
       <div class="wcard ${s === 'm' ? 'mastered' : (s === 'r' ? 'reviewing' : '')} ${isHighImportance ? 'is-important' : ''}">
@@ -905,6 +911,14 @@ html.dark .btn-outline {
     window.scrollTo(0,0);
   }
 
+  document.getElementById('btn-blind').onclick = function() {
+    triggerHaptic();
+    isBlindMode = !isBlindMode;
+    document.body.classList.toggle('blind-mode');
+    this.classList.toggle('active');
+    showToast(isBlindMode ? "Study Mode: ON" : "Study Mode: OFF");
+  };
+
   document.getElementById('theme-toggle').onclick = function() {
     triggerHaptic();
     const isD = document.documentElement.classList.toggle('dark');
@@ -927,10 +941,16 @@ html.dark .btn-outline {
   function initFC() {
     triggerHaptic();
     const cat = document.getElementById('fc-cat').value;
-    fcList = vocab.filter(v => !cat || v.cat === cat).sort(() => Math.random() - 0.5);
-    if(!fcList.length) { showToast("No words found."); return; }
-    fcIdx = 0; fcFlipped = false;
-    renderFC();
+    const sortMethod = document.getElementById('fc-sort').value;
+    fcList = vocab.filter(v => !cat || v.cat === cat);
+    if (!fcList.length) { showToast("No words found."); return; }
+
+    if (sortMethod === 'important') {
+        fcList.sort((a, b) => (b.important - a.important) || (Math.random() - 0.5));
+    } else {
+        fcList.sort(() => Math.random() - 0.5);
+    }
+    fcIdx = 0; fcFlipped = false; renderFC();
   }
 
   function renderFC() {
